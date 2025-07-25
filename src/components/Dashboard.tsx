@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FiGrid, FiList, FiFilter, FiPlus, FiBookOpen, FiTrendingUp, FiYoutube, FiCode, FiHelpCircle } from 'react-icons/fi'
+import { FiGrid, FiList, FiFilter, FiPlus, FiBookOpen, FiTrendingUp, FiYoutube, FiCode, FiHelpCircle, FiClock, FiTarget } from 'react-icons/fi'
 import SearchBar from './SearchBar'
 import ProgressTracker from './ProgressTracker'
 import { useNotifications } from './NotificationProvider'
+
+
 
 interface QuickAction {
   id: string
@@ -195,6 +197,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+
     </div>
   )
-} 
+}

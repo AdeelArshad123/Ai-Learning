@@ -25,14 +25,16 @@ async function fetchInternetContent(topic: string) {
 
 export async function POST(request: Request) {
   try {
-    const { 
-      language, 
-      topic, 
+    const {
+      language,
+      topic,
       difficulty = 'beginner',
       quizType = 'multiple-choice',
       questionCount = 5,
       includeCodeSnippets = true,
-      includePracticalExamples = true
+      includePracticalExamples = true,
+      userPerformance = null,
+      adaptiveDifficulty = false
     } = await request.json()
 
     if (!language || !topic) {
@@ -45,8 +47,20 @@ export async function POST(request: Request) {
     // Fetch recent internet content
     const internetContent = await fetchInternetContent(topic)
 
-    // Enhanced prompt with more quiz types and features
-    const basePrompt = `You are an expert programming tutor. Generate a ${difficulty} level quiz for "${topic}" in ${language}.`
+    // Adaptive difficulty adjustment based on user performance
+    let adjustedDifficulty = difficulty
+    if (adaptiveDifficulty && userPerformance) {
+      const avgScore = userPerformance.averageScore || 0
+      if (avgScore > 80 && difficulty === 'beginner') adjustedDifficulty = 'intermediate'
+      else if (avgScore > 85 && difficulty === 'intermediate') adjustedDifficulty = 'advanced'
+      else if (avgScore < 60 && difficulty === 'intermediate') adjustedDifficulty = 'beginner'
+      else if (avgScore < 70 && difficulty === 'advanced') adjustedDifficulty = 'intermediate'
+    }
+
+    // Enhanced prompt with adaptive difficulty and user context
+    const basePrompt = `You are an expert programming tutor. Generate a ${adjustedDifficulty} level quiz for "${topic}" in ${language}.
+
+    ${userPerformance ? `User Context: Average score: ${userPerformance.averageScore}%, Weak areas: ${userPerformance.weakAreas?.join(', ') || 'None identified'}, Strong areas: ${userPerformance.strongAreas?.join(', ') || 'None identified'}. Focus more on weak areas.` : ''}`
 
     const quizTypeInstructions = {
       'multiple-choice': 'Create multiple-choice questions with 4 options (A, B, C, D)',

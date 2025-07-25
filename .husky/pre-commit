@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Run linting
+echo "📝 Running ESLint..."
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "❌ ESLint failed. Please fix the issues before committing."
+  exit 1
+fi
+
+# Run type checking
+echo "🔍 Running TypeScript check..."
+npm run type-check
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript check failed. Please fix the type errors before committing."
+  exit 1
+fi
+
+# Run tests
+echo "🧪 Running tests..."
+npm run test -- --passWithNoTests
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Please fix the failing tests before committing."
+  exit 1
+fi
+
+# Check for sensitive files
+echo "🔒 Checking for sensitive files..."
+if git diff --cached --name-only | grep -E "\.(env|key|pem|p12|pfx)$"; then
+  echo "❌ Sensitive files detected in commit. Please remove them."
+  exit 1
+fi
+
+# Check for large files
+echo "📏 Checking for large files..."
+git diff --cached --name-only | while read file; do
+  if [ -f "$file" ]; then
+    size=$(wc -c < "$file")
+    if [ $size -gt 1048576 ]; then  # 1MB
+      echo "❌ Large file detected: $file ($(($size / 1024))KB)"
+      echo "Please use Git LFS for large files or reduce file size."
+      exit 1
+    fi
+  fi
+done
+
+echo "✅ All pre-commit checks passed!"

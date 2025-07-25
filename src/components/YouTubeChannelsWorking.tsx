@@ -18,16 +18,7 @@ const languages = [
   'Java', 'C++', 'Go', 'Rust', 'PHP', 'Ruby'
 ]
 
-function getAvatar(channel: YouTubeChannel) {
-  return <FaYoutube className="text-red-500 text-4xl drop-shadow" />;
-}
-
-function isTrending(subscribers: string) {
-  const num = parseFloat(subscribers.replace(/[^\d.]/g, ''));
-  return subscribers.includes('M') && num >= 1;
-}
-
-export default function YouTubeChannels() {
+export default function YouTubeChannelsWorking() {
   const [channels, setChannels] = useState<YouTubeChannel[]>([])
   const [filteredChannels, setFilteredChannels] = useState<YouTubeChannel[]>([])
   const [selectedLanguage, setSelectedLanguage] = useState('All')
@@ -38,20 +29,12 @@ export default function YouTubeChannels() {
     const fetchChannels = async () => {
       try {
         console.log('Fetching YouTube channels...')
-        const response = await fetch('/api/get-youtube-channels', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-
-        console.log('Response status:', response.status)
-        console.log('Response ok:', response.ok)
-
+        const response = await fetch('/api/get-youtube-channels')
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
-
+        
         const data = await response.json()
         console.log('Received channels:', data.length)
         setChannels(data)
@@ -64,7 +47,6 @@ export default function YouTubeChannels() {
       }
     }
 
-    console.log('useEffect running, calling fetchChannels...')
     fetchChannels()
   }, [])
 
@@ -141,12 +123,12 @@ export default function YouTubeChannels() {
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="flex-shrink-0">
-                {getAvatar(channel)}
+                <FaYoutube className="text-red-500 text-4xl drop-shadow" />
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors flex items-center gap-2">
                   {channel.name}
-                  {isTrending(channel.subscribers) && (
+                  {channel.subscribers.includes('M') && parseFloat(channel.subscribers.replace(/[^\d.]/g, '')) >= 1 && (
                     <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200 animate-pulse">
                       <FiTrendingUp className="mr-1" /> Trending
                     </span>
