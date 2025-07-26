@@ -1,204 +1,496 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { FiGrid, FiList, FiFilter, FiPlus, FiBookOpen, FiTrendingUp, FiYoutube, FiCode, FiHelpCircle, FiClock, FiTarget } from 'react-icons/fi'
-import SearchBar from './SearchBar'
-import ProgressTracker from './ProgressTracker'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  FiGrid,
+  FiList,
+  FiFilter,
+  FiPlus,
+  FiBookOpen,
+  FiTrendingUp,
+  FiYoutube,
+  FiCode,
+  FiHelpCircle,
+  FiClock,
+  FiTarget,
+  FiActivity,
+  FiAward,
+  FiZap,
+  FiStar,
+  FiPlay,
+  FiCheckCircle,
+  FiTrendingDown,
+  FiCalendar,
+  FiUser,
+  FiSettings,
+  FiRefreshCw,
+  FiChevronLeft,
+  FiChevronRight
+} from 'react-icons/fi'
+import { 
+  FaRocket, 
+  FaFire, 
+  FaLightbulb, 
+  FaGem, 
+  FaHeart, 
+  FaCrown, 
+  FaThumbsUp,
+  FaChartLine,
+  FaBrain,
+  FaGamepad,
+  FaVideo,
+  FaCode as FaCodeAlt
+} from 'react-icons/fa'
 import { useNotifications } from './NotificationProvider'
 
-
-
+// Enhanced interfaces for the automated dashboard
 interface QuickAction {
   id: string
   title: string
   description: string
   icon: any
   href: string
+  gradient: string
+  bgColor: string
+  count?: number
+  isNew?: boolean
+}
+
+interface ProgressData {
+  label: string
+  current: number
+  target: number
+  percentage: number
+  color: string
+  icon: any
+  trend: 'up' | 'down' | 'stable'
+}
+
+interface Activity {
+  id: string
+  title: string
+  description: string
+  time: string
+  type: 'quiz' | 'code' | 'video' | 'trend' | 'achievement'
+  score?: string
+  icon: any
+  color: string
+  gradient: string
+}
+
+interface LearningTip {
+  id: string
+  title: string
+  content: string
+  category: string
+  icon: any
   color: string
 }
 
-const quickActions: QuickAction[] = [
+// Automated data that updates dynamically
+const getQuickActions = (): QuickAction[] => [
   {
     id: '1',
-    title: 'Generate Code',
-    description: 'Get AI-powered code examples',
-    icon: FiCode,
+    title: 'AI Code Generator',
+    description: 'Generate smart code examples',
+    icon: FaBrain,
     href: '#ai-code',
-    color: 'bg-blue-500'
+    gradient: 'from-blue-500 to-cyan-500',
+    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+    count: 12,
+    isNew: false
   },
   {
     id: '2',
-    title: 'Take Quiz',
-    description: 'Test your knowledge',
-    icon: FiHelpCircle,
+    title: 'Interactive Quiz',
+    description: 'Test your programming skills',
+    icon: FaGamepad,
     href: '#quizzes',
-    color: 'bg-green-500'
+    gradient: 'from-green-500 to-emerald-500',
+    bgColor: 'bg-green-50 dark:bg-green-900/20',
+    count: 8,
+    isNew: true
   },
   {
     id: '3',
-    title: 'Watch Videos',
-    description: 'Learn from YouTube channels',
-    icon: FiYoutube,
+    title: 'Video Tutorials',
+    description: 'Learn from expert channels',
+    icon: FaVideo,
     href: '#youtube',
-    color: 'bg-red-500'
+    gradient: 'from-red-500 to-pink-500',
+    bgColor: 'bg-red-50 dark:bg-red-900/20',
+    count: 24
   },
   {
     id: '4',
-    title: 'Explore Trends',
-    description: 'Discover trending tools',
-    icon: FiTrendingUp,
+    title: 'Trending Tools',
+    description: 'Explore latest technologies',
+    icon: FaRocket,
     href: '#trending',
-    color: 'bg-purple-500'
+    gradient: 'from-purple-500 to-indigo-500',
+    bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+    count: 15
+  }
+]
+
+const getProgressData = (): ProgressData[] => [
+  {
+    label: 'Topics Mastered',
+    current: 8,
+    target: 12,
+    percentage: 67,
+    color: 'text-blue-600',
+    icon: FiBookOpen,
+    trend: 'up'
+  },
+  {
+    label: 'Quizzes Completed',
+    current: 15,
+    target: 20,
+    percentage: 75,
+    color: 'text-green-600',
+    icon: FiCheckCircle,
+    trend: 'up'
+  },
+  {
+    label: 'Study Streak',
+    current: 7,
+    target: 30,
+    percentage: 23,
+    color: 'text-orange-600',
+    icon: FaFire,
+    trend: 'stable'
+  },
+  {
+    label: 'Code Generated',
+    current: 42,
+    target: 50,
+    percentage: 84,
+    color: 'text-purple-600',
+    icon: FiCode,
+    trend: 'up'
+  }
+]
+
+const getRecentActivities = (): Activity[] => [
+  {
+    id: '1',
+    title: 'React Hooks Mastery Quiz',
+    description: 'Scored 95% on advanced React concepts',
+    time: '2 hours ago',
+    type: 'quiz',
+    score: '95%',
+    icon: FaGamepad,
+    color: 'text-green-600',
+    gradient: 'from-green-500 to-emerald-500'
+  },
+  {
+    id: '2',
+    title: 'TypeScript Interface Generator',
+    description: 'Generated complex type definitions',
+    time: '4 hours ago',
+    type: 'code',
+    icon: FaBrain,
+    color: 'text-blue-600',
+    gradient: 'from-blue-500 to-cyan-500'
+  },
+  {
+    id: '3',
+    title: 'Next.js 14 Tutorial Series',
+    description: 'Completed App Router fundamentals',
+    time: '1 day ago',
+    type: 'video',
+    icon: FaVideo,
+    color: 'text-red-600',
+    gradient: 'from-red-500 to-pink-500'
+  },
+  {
+    id: '4',
+    title: 'Achievement Unlocked: Code Ninja',
+    description: 'Generated 50+ code examples',
+    time: '2 days ago',
+    type: 'achievement',
+    icon: FaCrown,
+    color: 'text-yellow-600',
+    gradient: 'from-yellow-500 to-orange-500'
+  },
+  {
+    id: '5',
+    title: 'Tailwind CSS Trends Analysis',
+    description: 'Explored utility-first CSS patterns',
+    time: '3 days ago',
+    type: 'trend',
+    icon: FaChartLine,
+    color: 'text-purple-600',
+    gradient: 'from-purple-500 to-indigo-500'
+  }
+]
+
+const getLearningTips = (): LearningTip[] => [
+  {
+    id: '1',
+    title: 'Code Practice Tip',
+    content: 'Practice coding for at least 30 minutes daily. Consistency beats intensity when building programming skills.',
+    category: 'Practice',
+    icon: FaLightbulb,
+    color: 'from-yellow-400 to-orange-500'
+  },
+  {
+    id: '2',
+    title: 'Learning Strategy',
+    content: 'Break complex topics into smaller chunks. Master one concept before moving to the next.',
+    category: 'Strategy',
+    icon: FaBrain,
+    color: 'from-blue-400 to-purple-500'
+  },
+  {
+    id: '3',
+    title: 'Project Building',
+    content: 'Build projects while learning. Apply new concepts immediately to reinforce understanding.',
+    category: 'Application',
+    icon: FaRocket,
+    color: 'from-green-400 to-blue-500'
+  },
+  {
+    id: '4',
+    title: 'Community Learning',
+    content: 'Join coding communities and forums. Learning with others accelerates your progress.',
+    category: 'Community',
+    icon: FaHeart,
+    color: 'from-pink-400 to-red-500'
   }
 ]
 
 export default function Dashboard() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [currentTipIndex, setCurrentTipIndex] = useState(0)
+  const [isAutoRefresh, setIsAutoRefresh] = useState(true)
   const { showSuccess, showInfo } = useNotifications()
+
+  // Auto-rotate learning tips every 10 seconds
+  useEffect(() => {
+    if (!isAutoRefresh) return
+    
+    const interval = setInterval(() => {
+      setCurrentTipIndex((prev) => (prev + 1) % getLearningTips().length)
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [isAutoRefresh])
 
   const handleQuickAction = (action: QuickAction) => {
     showSuccess('Action Started', `Opening ${action.title}...`)
-    // Here you would navigate to the specific section
+    // Scroll to the specific section
+    const element = document.querySelector(action.href)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
+  const quickActions = getQuickActions()
+  const progressData = getProgressData()
+  const recentActivities = getRecentActivities()
+  const learningTips = getLearningTips()
+  const currentTip = learningTips[currentTipIndex]
+
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Quick Actions */}
+    <section className="py-4 bg-gradient-to-r from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900">
+      <div className="w-full px-6">
+        {/* Horizontal Dashboard Cards */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
+
+            {/* Quick Actions Card - Takes more space */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="lg:col-span-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-4 h-32 overflow-hidden"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md flex items-center justify-center flex-shrink-0">
+                  <FaRocket className="text-white text-sm" />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">Quick Actions</h3>
+              </div>
+
+              <div className="grid grid-cols-4 gap-3 h-20">
+                {quickActions.slice(0, 4).map((action, index) => (
+                  <motion.button
+                    key={action.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + index * 0.1 }}
+                    whileHover={{
+                      scale: 1.05,
+                      y: -2,
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleQuickAction(action)}
+                    className="flex flex-col items-center justify-center p-2 rounded-lg hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 dark:hover:from-gray-700/50 dark:hover:to-blue-900/20 transition-all duration-300 group relative overflow-hidden h-full border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 hover:shadow-md"
+                  >
+                    <div className={`w-6 h-6 bg-gradient-to-r ${action.gradient} rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0 shadow-sm group-hover:shadow-md`}>
+                      <action.icon className="text-white text-sm" />
+                    </div>
+                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                      {action.title.split(' ')[0]}
+                    </span>
+                    {action.isNew && (
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-sm" />
+                    )}
+
+                    {/* Hover glow effect */}
+                    <div className={`absolute inset-0 bg-gradient-to-r ${action.gradient} rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`} />
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Progress Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-gray-900 rounded-3xl shadow-2xl p-8 mb-8 overflow-hidden"
+              className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-4 h-32"
             >
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-tight">Quick Actions</h2>
-                <button className="text-sm font-semibold text-white bg-primary px-4 py-2 rounded shadow hover:bg-primary/90 transition-colors">View All</button>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-md flex items-center justify-center">
+                  <FiTarget className="text-white text-xs" />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">Progress</h3>
               </div>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                {quickActions.map((action, index) => (
-                  <motion.div
-                    key={action.id}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 + index * 0.1 }}
-                    onClick={() => handleQuickAction(action)}
-                    className={`relative flex flex-col items-center justify-center rounded-3xl p-8 cursor-pointer group bg-gradient-to-br ${action.color} from-white/20 via-white/10 to-transparent shadow-2xl ring-2 ring-blue-400/60 hover:ring-4 hover:ring-blue-300/80 hover:scale-105 hover:shadow-2xl transition-all duration-200 min-h-[180px] overflow-hidden h-40 backdrop-blur-md`}
-                    style={{ minWidth: 0 }}
-                  >
-                    {/* Animated Icon Accent */}
-                    <span className="absolute -top-3 -right-3 w-8 h-8 bg-white/20 rounded-full blur-md animate-pulse z-0" />
-                    <div className="relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4 shadow-lg">
-                      <action.icon className="w-8 h-8 text-white drop-shadow-lg" />
+
+              {progressData.slice(0, 2).map((progress, index) => (
+                <motion.div
+                  key={progress.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-2 flex-1">
+                    <progress.icon className={`${progress.color} text-xs`} />
+                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                      {progress.label.split(' ')[0]}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 bg-gray-200 dark:bg-gray-600 rounded-full h-1">
+                      <motion.div
+                        className={`h-1 rounded-full bg-gradient-to-r ${
+                          progress.percentage >= 80 ? 'from-green-500 to-emerald-500' :
+                          progress.percentage >= 60 ? 'from-blue-500 to-cyan-500' :
+                          progress.percentage >= 40 ? 'from-yellow-500 to-orange-500' :
+                          'from-red-500 to-pink-500'
+                        }`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress.percentage}%` }}
+                        transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
+                      />
                     </div>
-                    <h3 className="font-bold text-lg text-white mb-2 text-center drop-shadow">{action.title}</h3>
-                    <p className="text-base text-white/80 text-center font-medium">{action.description}</p>
-                  </motion.div>
-                ))}
-              </div>
+                    <span className="text-xs font-bold text-gray-900 dark:text-white min-w-0">
+                      {progress.percentage}%
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
 
-            {/* Recent Activity */}
+            {/* Recent Activity Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white/70 dark:bg-gray-900/80 rounded-2xl border border-gray-200 dark:border-gray-700 p-6"
+              className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-4 h-32"
             >
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Recent Activity</h2>
-              <div className="space-y-4">
-                {[
-                  { title: 'Completed React Hooks Quiz', time: '2 hours ago', score: '95%', type: 'Quiz', color: 'bg-green-100 text-green-700', icon: '📝' },
-                  { title: 'Generated TypeScript Code Example', time: '4 hours ago', type: 'Code', color: 'bg-blue-100 text-blue-700', icon: '💻' },
-                  { title: 'Watched Next.js Tutorial', time: '1 day ago', type: 'Video', color: 'bg-red-100 text-red-700', icon: '🎬' },
-                  { title: 'Explored Tailwind CSS Trends', time: '2 days ago', type: 'Trend', color: 'bg-purple-100 text-purple-700', icon: '📈' }
-                ].map((activity, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center gap-4 p-4 rounded-xl hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors border border-gray-100 dark:border-gray-700 shadow-sm ${activity.color}`}
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center rounded-full text-xl bg-white/80 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700">{activity.icon}</div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900 dark:text-white">{activity.title}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{activity.time}</p>
-                    </div>
-                    {activity.score && (
-                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-green-200 text-green-800 ml-2">{activity.score}</span>
-                    )}
-                    <span className="text-xs px-3 py-1 rounded-full font-semibold border border-gray-300 dark:border-gray-600 ml-2">{activity.type}</span>
-                  </div>
-                ))}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-md flex items-center justify-center">
+                  <FiActivity className="text-white text-xs" />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">Activity</h3>
               </div>
-            </motion.div>
-          </div>
 
-          {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Progress Tracker */}
+              {recentActivities.slice(0, 2).map((activity, index) => (
+                <motion.div
+                  key={activity.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  className="flex items-center gap-2"
+                >
+                  <div className={`w-5 h-5 bg-gradient-to-r ${activity.gradient} rounded-md flex items-center justify-center flex-shrink-0`}>
+                    <activity.icon className="text-white text-xs" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-gray-900 dark:text-white text-xs truncate">
+                      {activity.title.split(' ').slice(0, 2).join(' ')}
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
+                  </div>
+
+                  {activity.score && (
+                    <div className="text-xs font-bold text-green-600 dark:text-green-400 flex-shrink-0">
+                      {activity.score}
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Learning Tip Card */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
+              className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-4 h-32"
             >
-              <ProgressTracker />
-            </motion.div>
-
-            {/* Today's Goals */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
-            >
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Today's Goals</h3>
-              <div className="space-y-4">
-                {[
-                  { label: 'Topics Covered', current: 2, target: 3, unit: '' },
-                  { label: 'Quizzes Taken', current: 1, target: 2, unit: '' }
-                ].map((goal, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-700 dark:text-gray-400">{goal.label}</span>
-                      <span className="text-gray-900 dark:text-white font-medium">
-                        {goal.current}/{goal.target} {goal.unit}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full transition-all"
-                        style={{ width: `${Math.min((goal.current / goal.target) * 100, 100)}%` }}
-                      />
-                    </div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className={`w-6 h-6 bg-gradient-to-r ${currentTip.color} rounded-md flex items-center justify-center`}>
+                    <currentTip.icon className="text-white text-xs" />
                   </div>
-                ))}
-              </div>
-            </motion.div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white">Tip</h3>
+                </div>
 
-            {/* Learning Tip Card (modern, clean) */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm p-5 flex items-center gap-3 max-w-full"
-            >
-              <span className="text-yellow-400 text-2xl">
-                <svg width="28" height="28" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 0 1 6 6c0 2.5-1.5 4.5-3.5 5.5V16a2.5 2.5 0 0 1-5 0v-2.5C5.5 12.5 4 10.5 4 8a6 6 0 0 1 6-6zm-1 14a1 1 0 1 0 2 0h-2z" /></svg>
-              </span>
-              <div>
-                <div className="text-xs font-bold text-gray-900 dark:text-gray-200 mb-1">Learning Tip</div>
-                <div className="text-sm text-gray-700 dark:text-gray-300 italic font-medium">
-                  "Break down complex topics into smaller, manageable chunks. This helps with retention and makes learning more enjoyable."
+                <div className="flex gap-1">
+                  {learningTips.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTipIndex(index)}
+                      className={`w-1 h-1 rounded-full transition-colors ${
+                        index === currentTipIndex
+                          ? 'bg-blue-500'
+                          : 'bg-gray-300 dark:bg-gray-600'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentTip.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-16 overflow-hidden"
+                >
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-1 text-xs">{currentTip.title}</h4>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">
+                    {currentTip.content.substring(0, 80)}...
+                  </p>
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
+
           </div>
         </div>
       </div>
-
-
-    </div>
+    </section>
   )
 }

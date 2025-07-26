@@ -63,19 +63,6 @@ export default function Home() {
       {/* YouTube Channels Section (moved up) */}
       <section id="youtube" className="container mx-auto px-4 mb-24">
         <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl font-extrabold mb-4 text-primary dark:text-white tracking-tight drop-shadow">
-              Top YouTube Programming Channels
-            </h2>
-            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-              Discover the most popular YouTube channels for learning programming languages and frameworks. Filter by language to find the best resources for your learning journey.
-            </p>
-          </motion.div>
           <YouTubeChannels />
         </div>
       </section>
