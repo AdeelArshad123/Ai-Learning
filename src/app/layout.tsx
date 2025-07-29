@@ -8,13 +8,17 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 
 const inter = Inter({ subsets: ['latin'] })
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#3b82f6',
+}
+
 export const metadata: Metadata = {
   title: 'CodeLearner - Learn Programming with AI',
   description: 'Learn programming languages, tools, and concepts with AI-powered examples and quizzes',
   keywords: 'programming, coding, AI, learning, tutorials, JavaScript, Python, React',
   authors: [{ name: 'CodeLearner Team' }],
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#3b82f6',
 }
 
 export default function RootLayout({

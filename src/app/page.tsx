@@ -29,8 +29,10 @@ const TrendingLanguages = dynamic(() => import('@/components/TrendingLanguages')
 // AI Components - Regular imports with ClientOnly wrapper
 import AILearningAssistant from '@/components/AILearningAssistant'
 import AIQuizGenerator from '@/components/AIQuizGenerator'
-import AIContentRecommender from '@/components/AIContentRecommender'
+import AIRoadmapGenerator from '@/components/AIRoadmapGenerator'
 import AILearningAnalytics from '@/components/AILearningAnalytics'
+import AISearchBar from '@/components/AISearchBar'
+import FloatingAIButton from '@/components/FloatingAIButton'
 const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
   loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
 })
@@ -77,7 +79,36 @@ export default function Home() {
         </NoSSR>
       </section>
 
-
+      {/* AI Search Bar Section */}
+      <section id="ai-search" className="container mx-auto px-4 mb-24">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-center mb-8"
+          >
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-4xl font-extrabold text-primary dark:text-white tracking-tight drop-shadow">
+                AI-Powered Search
+              </span>
+              <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">🤖 AI</span>
+              </div>
+            </div>
+            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
+              Ask AI anything about programming. Get intelligent suggestions, voice search, and personalized results.
+            </p>
+          </motion.div>
+          <ClientOnly fallback={
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-8 animate-pulse">
+              <div className="h-12 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
+            </div>
+          }>
+            <AISearchBar />
+          </ClientOnly>
+        </div>
+      </section>
 
       {/* Single Recommended Resources Section - Full Width */}
       <div className="w-full mb-24">
@@ -86,27 +117,32 @@ export default function Home() {
         </div>
       </div>
 
-      {/* AI Content Recommendations Section */}
+      {/* AI Learning Roadmap Generator Section */}
       <section id="ai-recommendations" className="container mx-auto px-4 mb-24">
-        <ClientOnly fallback={
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-            <div className="animate-pulse">
-              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
-              </div>
-            </div>
-          </div>
-        }>
-          <AIContentRecommender
-            currentTopic="JavaScript"
-            skillLevel="intermediate"
-            userInterests={['React', 'Node.js', 'TypeScript']}
-            learningGoals={['Full-stack development', 'Modern JavaScript']}
-          />
-        </ClientOnly>
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl font-extrabold mb-4 text-primary dark:text-white tracking-tight drop-shadow">
+              AI Learning Roadmap Generator
+            </h2>
+            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
+              Get a personalized learning roadmap tailored specifically for beginners and freshers. Our AI analyzes your goals, experience, and schedule to create the perfect learning path.
+            </p>
+          </motion.div>
+
+          <AIRoadmapGenerator />
+
+
+
+
+
+
+
+        </div>
       </section>
 
       <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
@@ -207,21 +243,10 @@ export default function Home() {
         />
       </ClientOnly>
 
-      {/* AI Tutor Floating Button */}
-      {!isTutorOpen && (
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setIsTutorOpen(true)}
-          className="fixed bottom-4 right-4 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl flex items-center justify-center z-40 hover:shadow-blue-500/25"
-        >
-          <span className="text-2xl">🤖</span>
-        </motion.button>
-      )}
+      {/* Enhanced Floating AI Assistant */}
+      <FloatingAIButton />
 
-      {/* AI Tutor Chat */}
+      {/* AI Tutor Chat (Legacy - keeping for compatibility) */}
       <LazyAITutor
         isOpen={isTutorOpen}
         onToggle={() => setIsTutorOpen(!isTutorOpen)}
