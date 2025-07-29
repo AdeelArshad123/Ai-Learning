@@ -24,6 +24,7 @@
     "deploy:netlify": "node scripts/automation/deploy.js netlify production",
     "deploy:docker": "node scripts/automation/deploy.js docker production",
     "analyze": "npm run build && npx @next/bundle-analyzer",
+    "analyze:build": "ANALYZE=true npm run build",
     "security:audit": "npm audit --audit-level=moderate",
     "security:fix": "npm audit fix",
     "db:migrate": "node scripts/database/migrate.js",
@@ -35,6 +36,7 @@
     "clean": "rm -rf .next node_modules/.cache",
     "fresh-install": "rm -rf node_modules package-lock.json && npm install",
     "update-deps": "npx npm-check-updates -u && npm install",
+    "optimize": "npm run lint:fix && npm run type-check && npm run build",
     "precommit": "npm run lint && npm run type-check",
     "prepare": "husky install || true"
   },

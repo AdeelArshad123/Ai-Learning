@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { DeepSeekAPI, DeepSeekError } from '@/lib/deepseek'
+import { apiCache } from '@/lib/cache'
 
 export async function POST(request: Request) {
   try {
@@ -25,6 +26,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Create cache key
+    const cacheKey = `code-${language}-${topic}-${difficulty}-${codeQuality}-${codeStyle}-${framework || 'none'}`
+    
+    // Check cache first
+    const cachedResult = apiCache.get(cacheKey)
+    if (cachedResult) {
+      console.log('Returning cached code generation result')
+      return NextResponse.json({ success: true, data: cachedResult })
+    }
     const systemPrompt = `You are an expert programming tutor and code generator. Generate high-quality, educational code examples.
 
 ${includeComments ? 'Include detailed comments explaining each part of the code.' : 'Write clean code without comments.'}
@@ -106,6 +116,10 @@ ${customInstructions ? `Custom requirements: ${customInstructions}` : ''}`
     }
 
     console.log('Successfully generated code for:', topic)
+    
+    // Cache the result for 30 minutes
+    apiCache.set(cacheKey, result, 30)
+    
     return NextResponse.json({ success: true, data: result })
   } catch (error: any) {
     console.error('Error generating code:', error)

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiSearch, FiX, FiTrendingUp, FiCode, FiBookOpen } from 'react-icons/fi'
+import { useDebounce } from '@/hooks/useDebounce'
 
 interface SearchResult {
   id: string
@@ -25,6 +26,7 @@ const mockSearchResults: SearchResult[] = [
 
 export default function SearchBar() {
   const [query, setQuery] = useState('')
+  const debouncedQuery = useDebounce(query, 300)
   const [isOpen, setIsOpen] = useState(false)
   const [results, setResults] = useState<SearchResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -42,10 +44,10 @@ export default function SearchBar() {
   }, [])
 
   useEffect(() => {
-    const searchTimeout = setTimeout(async () => {
-      if (query.trim()) {
+    if (debouncedQuery.trim()) {
+      const performSearch = async () => {
         try {
-          const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
+          const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`)
           if (response.ok) {
             const data = await response.json()
             setResults(data.results || [])
@@ -56,21 +58,20 @@ export default function SearchBar() {
           console.error('Search error:', error)
           // Fallback to mock data
           const filtered = mockSearchResults.filter(item =>
-            item.title.toLowerCase().includes(query.toLowerCase()) ||
-            item.description.toLowerCase().includes(query.toLowerCase())
+            item.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            item.description.toLowerCase().includes(debouncedQuery.toLowerCase())
           )
           setResults(filtered)
           setIsOpen(true)
           setSelectedIndex(-1)
         }
-      } else {
-        setResults([])
-        setIsOpen(false)
       }
-    }, 300) // Debounce search
-
-    return () => clearTimeout(searchTimeout)
-  }, [query])
+      performSearch()
+    } else {
+      setResults([])
+      setIsOpen(false)
+    }
+  }, [debouncedQuery])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {

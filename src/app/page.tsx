@@ -2,12 +2,16 @@
 
 import { motion } from 'framer-motion'
 import TrendingTools from '@/components/TrendingTools'
-import AICodeGenerator from '@/components/AICodeGenerator'
 import YouTubeChannels from '@/components/YouTubeChannelsFixed'
 import Dashboard from '@/components/Dashboard'
 import SearchBar from '@/components/SearchBar'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
+import {
+  LazyAICodeGenerator,
+  LazyTopicQuiz,
+  LazyAITutor
+} from '@/components/LazyComponents'
 
 // Lazy load heavy components
 const TopicQuiz = dynamic(() => import('@/components/TopicQuiz'), {
@@ -30,7 +34,6 @@ import AILearningAnalytics from '@/components/AILearningAnalytics'
 const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
   loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
 })
-
 import { FaReact, FaGithub, FaDatabase, FaStripe, FaYoutube, FaPalette, FaBook, FaCode, FaServer, FaCloud, FaIcons, FaRegLightbulb, FaRocket, FaCogs } from 'react-icons/fa';
 import { FiBookOpen, FiCheck, FiTrendingUp, FiBarChart, FiAward, FiHelpCircle } from 'react-icons/fi';
 
@@ -40,6 +43,7 @@ import ClientOnly from '../components/ClientOnly';
 import NoSSR from '../components/NoSSR';
 
 export default function Home() {
+  const [isTutorOpen, setIsTutorOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -111,7 +115,7 @@ export default function Home() {
       <section id="quizzes" className="container mx-auto px-4 mb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
-            <TopicQuiz language="JavaScript" topic="Async/Await" />
+            <LazyTopicQuiz language="JavaScript" topic="Async/Await" />
           </div>
           <div>
             <ClientOnly fallback={
@@ -182,7 +186,7 @@ export default function Home() {
               Generate AI-powered code examples with explanations, key learning points, and multiple programming languages.
             </p>
           </motion.div>
-          <AICodeGenerator />
+          <LazyAICodeGenerator />
         </div>
       </section>
 
@@ -202,6 +206,26 @@ export default function Home() {
           currentSection="dashboard"
         />
       </ClientOnly>
+
+      {/* AI Tutor Floating Button */}
+      {!isTutorOpen && (
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setIsTutorOpen(true)}
+          className="fixed bottom-4 right-4 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl flex items-center justify-center z-40 hover:shadow-blue-500/25"
+        >
+          <span className="text-2xl">🤖</span>
+        </motion.button>
+      )}
+
+      {/* AI Tutor Chat */}
+      <LazyAITutor
+        isOpen={isTutorOpen}
+        onToggle={() => setIsTutorOpen(!isTutorOpen)}
+      />
     </div>
   )
 }
