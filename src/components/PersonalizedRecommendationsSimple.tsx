@@ -12,7 +12,7 @@ import {
   FaStar, 
   FaFire, 
   FaChevronRight,
-  FaRefresh,
+  FaRedo,
   FaFilter,
   FaHeart,
   FaBookmark
@@ -176,7 +176,7 @@ export default function PersonalizedRecommendationsSimple() {
 
                   {/* Metadata */}
                   <div className="flex items-center gap-2 mb-4">
-                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${difficultyColors[rec.difficulty]}`}>
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${difficultyColors[rec.difficulty as keyof typeof difficultyColors]}`}>
                       {rec.difficulty}
                     </span>
                     <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs">
@@ -232,7 +232,7 @@ export default function PersonalizedRecommendationsSimple() {
               onClick={fetchRecommendations}
               className="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-600 transition-colors"
             >
-              <FaRefresh />
+              <FaRedo />
               Refresh Recommendations
             </button>
           </motion.div>

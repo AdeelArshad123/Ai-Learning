@@ -119,7 +119,7 @@ const GradientWaveHero = () => {
               ]
             }}
             transition={{
-              duration: 8,
+              duration: 12,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -137,7 +137,7 @@ const GradientWaveHero = () => {
               ]
             }}
             transition={{
-              duration: 10,
+              duration: 15,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -163,29 +163,19 @@ const GradientWaveHero = () => {
         </svg>
       </div>
 
-      {/* Floating Stars */}
+      {/* Static Stars */}
       <div className="absolute inset-0">
-        {STAR_POSITIONS.map((position, i) => (
-          <motion.div
+        {STAR_POSITIONS.slice(0, 5).map((position, i) => (
+          <div
             key={i}
-            className="absolute text-yellow-300/40"
+            className="absolute text-yellow-300/20"
             style={{
               left: `${position.left}%`,
               top: `${position.top}%`,
             }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 1, 0.2],
-              scale: [0.5, 1, 0.5],
-            }}
-            transition={{
-              duration: (i % 4) + 3, // Deterministic duration based on index
-              repeat: Infinity,
-              delay: (i % 3) * 0.5, // Deterministic delay based on index
-            }}
           >
             <FaStar className="text-sm" />
-          </motion.div>
+          </div>
         ))}
       </div>
 

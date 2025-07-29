@@ -2,45 +2,29 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+// Optimized icon imports - only import what we need
 import {
-  FiGrid,
-  FiList,
-  FiFilter,
-  FiPlus,
-  FiBookOpen,
-  FiTrendingUp,
-  FiYoutube,
-  FiCode,
-  FiHelpCircle,
-  FiClock,
   FiTarget,
   FiActivity,
-  FiAward,
-  FiZap,
-  FiStar,
-  FiPlay,
-  FiCheckCircle,
-  FiTrendingDown,
-  FiCalendar,
-  FiUser,
-  FiSettings,
   FiRefreshCw,
   FiChevronLeft,
-  FiChevronRight
+  FiChevronRight,
+  FiTrendingUp,
+  FiTrendingDown,
+  FiCheckCircle,
+  FiBookOpen,
+  FiCode
 } from 'react-icons/fi'
-import { 
-  FaRocket, 
-  FaFire, 
-  FaLightbulb, 
-  FaGem, 
-  FaHeart, 
-  FaCrown, 
-  FaThumbsUp,
-  FaChartLine,
+import {
+  FaRocket,
+  FaLightbulb,
   FaBrain,
   FaGamepad,
   FaVideo,
-  FaCode as FaCodeAlt
+  FaFire,
+  FaCrown,
+  FaChartLine,
+  FaHeart
 } from 'react-icons/fa'
 import { useNotifications } from './NotificationProvider'
 
@@ -414,11 +398,8 @@ export default function Dashboard() {
               </div>
 
               {recentActivities.slice(0, 2).map((activity, index) => (
-                <motion.div
+                <div
                   key={activity.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
                   className="flex items-center gap-2"
                 >
                   <div className={`w-5 h-5 bg-gradient-to-r ${activity.gradient} rounded-md flex items-center justify-center flex-shrink-0`}>
@@ -437,7 +418,7 @@ export default function Dashboard() {
                       {activity.score}
                     </div>
                   )}
-                </motion.div>
+                </div>
               ))}
             </motion.div>
 

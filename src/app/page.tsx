@@ -13,22 +13,33 @@ import React, { useState } from 'react'
 const TopicQuiz = dynamic(() => import('@/components/TopicQuiz'), {
   loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
 })
+
+const RecommendedResources = dynamic(() => import('@/components/RecommendedResources'), {
+  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
+})
+
+const TrendingLanguages = dynamic(() => import('@/components/TrendingLanguages'), {
+  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
+})
+
+// AI Components - Regular imports with ClientOnly wrapper
+import AILearningAssistant from '@/components/AILearningAssistant'
+import AIQuizGenerator from '@/components/AIQuizGenerator'
+import AIContentRecommender from '@/components/AIContentRecommender'
+import AILearningAnalytics from '@/components/AILearningAnalytics'
 const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
   loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
 })
-const AITutor = dynamic(() => import('@/components/AITutor'), {
-  ssr: false // Don't render on server
-})
+
 import { FaReact, FaGithub, FaDatabase, FaStripe, FaYoutube, FaPalette, FaBook, FaCode, FaServer, FaCloud, FaIcons, FaRegLightbulb, FaRocket, FaCogs } from 'react-icons/fa';
 import { FiBookOpen, FiCheck, FiTrendingUp, FiBarChart, FiAward, FiHelpCircle } from 'react-icons/fi';
-import RecommendedResources from '@/components/RecommendedResources';
 
-import TrendingLanguages from '../components/TrendingLanguages';
 import Typewriter from '../components/Typewriter';
 import HeroSelector from '../components/HeroSections/HeroSelector';
+import ClientOnly from '../components/ClientOnly';
+import NoSSR from '../components/NoSSR';
 
 export default function Home() {
-  const [isTutorOpen, setIsTutorOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -42,6 +53,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* AI Learning Analytics Section */}
+      <section id="ai-analytics" className="container mx-auto px-4 mb-24">
+        <NoSSR fallback={
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-8"></div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </div>
+        }>
+          <AILearningAnalytics />
+        </NoSSR>
+      </section>
+
 
 
       {/* Single Recommended Resources Section - Full Width */}
@@ -51,11 +82,55 @@ export default function Home() {
         </div>
       </div>
 
+      {/* AI Content Recommendations Section */}
+      <section id="ai-recommendations" className="container mx-auto px-4 mb-24">
+        <ClientOnly fallback={
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </div>
+        }>
+          <AIContentRecommender
+            currentTopic="JavaScript"
+            skillLevel="intermediate"
+            userInterests={['React', 'Node.js', 'TypeScript']}
+            learningGoals={['Full-stack development', 'Modern JavaScript']}
+          />
+        </ClientOnly>
+      </section>
+
       <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
 
       {/* Quiz Generator Section */}
       <section id="quizzes" className="container mx-auto px-4 mb-24">
-        <TopicQuiz language="JavaScript" topic="Async/Await" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div>
+            <TopicQuiz language="JavaScript" topic="Async/Await" />
+          </div>
+          <div>
+            <ClientOnly fallback={
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="animate-pulse">
+                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+                  <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                </div>
+              </div>
+            }>
+              <AIQuizGenerator
+                topic="JavaScript"
+                difficulty="intermediate"
+                questionCount={3}
+              />
+            </ClientOnly>
+          </div>
+        </div>
       </section>
 
       <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
@@ -120,25 +195,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI Tutor Floating Button */}
-      {!isTutorOpen && (
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setIsTutorOpen(true)}
-          className="fixed bottom-4 right-4 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl flex items-center justify-center z-40 hover:shadow-blue-500/25"
-        >
-          <span className="text-2xl">🤖</span>
-        </motion.button>
-      )}
-
-      {/* AI Tutor Chat */}
-      <AITutor
-        isOpen={isTutorOpen}
-        onToggle={() => setIsTutorOpen(!isTutorOpen)}
-      />
+      {/* AI Learning Assistant - Testing */}
+      <ClientOnly>
+        <AILearningAssistant
+          currentTopic="JavaScript"
+          currentSection="dashboard"
+        />
+      </ClientOnly>
     </div>
   )
 }

@@ -264,7 +264,7 @@ print(f"Squares: {squares}")`
 }
 
 export async function POST(request: NextRequest) {
-  let body: TutorRequest
+  let body: TutorRequest | null = null
 
   try {
     body = await request.json()
@@ -309,7 +309,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error in AI tutor:', error)
 
-    // Use the message from the already parsed body
+    // Use the message from the already parsed body if available
     const userMessage = body?.message?.toLowerCase() || ''
 
     // Generate intelligent fallback response

@@ -12,7 +12,7 @@ import {
   FaStar, 
   FaFire, 
   FaChevronRight,
-  FaRefresh,
+  FaRedo,
   FaFilter,
   FaHeart,
   FaBookmark
@@ -101,7 +101,7 @@ export default function PersonalizedRecommendations() {
       newFavorites.add(id)
     }
     setFavorites(newFavorites)
-    localStorage.setItem('recommendation-favorites', JSON.stringify([...newFavorites]))
+    localStorage.setItem('recommendation-favorites', JSON.stringify(Array.from(newFavorites)))
   }
 
   const toggleBookmark = (id: string) => {
@@ -112,7 +112,7 @@ export default function PersonalizedRecommendations() {
       newBookmarks.add(id)
     }
     setBookmarks(newBookmarks)
-    localStorage.setItem('recommendation-bookmarks', JSON.stringify([...newBookmarks]))
+    localStorage.setItem('recommendation-bookmarks', JSON.stringify(Array.from(newBookmarks)))
   }
 
   const filteredRecommendations = recommendations.filter(rec => {
@@ -199,7 +199,7 @@ export default function PersonalizedRecommendations() {
             disabled={loading}
             className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full font-medium hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50"
           >
-            <FaRefresh className={`text-sm ${loading ? 'animate-spin' : ''}`} />
+            <FaRedo className={`text-sm ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
         </motion.div>
@@ -278,7 +278,7 @@ export default function PersonalizedRecommendations() {
 
                     {/* Metadata */}
                     <div className="flex items-center gap-2 mb-4">
-                      <span className={`text-xs font-semibold px-2 py-1 rounded-full ${difficultyColors[rec.difficulty]}`}>
+                      <span className={`text-xs font-semibold px-2 py-1 rounded-full ${difficultyColors[rec.difficulty as keyof typeof difficultyColors]}`}>
                         {rec.difficulty}
                       </span>
                       <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs">
@@ -355,7 +355,7 @@ export default function PersonalizedRecommendations() {
               onClick={fetchRecommendations}
               className="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-600 transition-colors"
             >
-              <FaRefresh />
+              <FaRedo />
               Refresh Recommendations
             </button>
           </motion.div>

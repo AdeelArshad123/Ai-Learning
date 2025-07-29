@@ -252,22 +252,8 @@ const TrendingLanguages = () => {
     <section className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-900/20 dark:to-purple-900/20 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0]
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-r from-indigo-400/10 to-purple-400/10 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative">
@@ -287,11 +273,8 @@ const TrendingLanguages = () => {
             </motion.div>
             <div className="text-left">
               <h2 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent leading-tight">
-                🔥 Trending
+                Trending Languages
               </h2>
-              <h3 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white -mt-2">
-                Languages
-              </h3>
             </div>
           </div>
 
@@ -400,216 +383,130 @@ const TrendingLanguages = () => {
                 <motion.div
                   key={lang.name}
                   layout
-                  initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
-                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, rotateY: 15 }}
-                  transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
-                  whileHover={{ y: -12, scale: 1.03, rotateY: 5 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ delay: index * 0.05, duration: 0.3 }}
+                  whileHover={{ y: -4, scale: 1.01, transition: { duration: 0.1 } }}
                   onHoverStart={() => setHoveredLang(lang.name)}
                   onHoverEnd={() => setHoveredLang(null)}
-                  className="group relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 dark:border-gray-700/50 overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)`,
-                    backdropFilter: 'blur(20px)'
-                  }}
+                  className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-100 border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
                 >
-                  {/* Animated Background Pattern */}
-                  <div className="absolute inset-0 opacity-10">
-                    <motion.div
-                      className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${lang.gradient} rounded-full`}
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 180, 360]
-                      }}
-                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                      style={{ transform: 'translate(50%, -50%)' }}
-                    />
-                    <motion.div
-                      className={`absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr ${lang.gradient} rounded-full`}
-                      animate={{
-                        scale: [1.2, 1, 1.2],
-                        rotate: [360, 180, 0]
-                      }}
-                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                      style={{ transform: 'translate(-50%, 50%)' }}
-                    />
-                  </div>
+                  {/* Header Section with Gradient */}
+                  <div className={`relative h-24 bg-gradient-to-br ${lang.gradient} overflow-hidden`}>
+                    {/* Decorative Elements */}
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-white/30 rounded-full -translate-y-8 translate-x-8"></div>
+                      <div className="absolute bottom-0 left-0 w-12 h-12 bg-white/20 rounded-full translate-y-6 -translate-x-6"></div>
+                    </div>
 
-                  {/* Trending Badge */}
-                  {lang.trend.startsWith('+') && (
-                    <motion.div
-                      className="absolute top-4 right-4 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-2 rounded-2xl flex items-center gap-2 shadow-lg"
-                      initial={{ scale: 0, rotate: -45 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
-                      <FiTrendingUp className="text-xs" />
-                      {lang.trend}
-                    </motion.div>
-                  )}
-
-                  {/* Favorite Button */}
-                  <motion.button
-                    className={`absolute top-4 left-4 p-3 rounded-2xl transition-all duration-300 ${
-                      favorites.includes(lang.name)
-                        ? 'bg-red-500 text-white shadow-lg scale-110'
-                        : 'bg-white/50 dark:bg-gray-700/50 text-gray-400 hover:text-red-500 hover:bg-white/80 dark:hover:bg-gray-600/80'
-                    } backdrop-blur-sm`}
-                    whileHover={{ scale: 1.1, rotate: 10 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => toggleFavorite(lang.name)}
-                  >
-                    <FaHeart className="w-4 h-4" />
-                  </motion.button>
-
-                  {/* Language Icon */}
-                  <div className="relative mb-6 flex justify-center">
-                    <motion.div
-                      className={`relative w-24 h-24 rounded-3xl bg-gradient-to-r ${lang.gradient} p-6 shadow-2xl`}
-                      whileHover={{
-                        scale: 1.15,
-                        rotate: [0, -5, 5, 0],
-                        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
-                      }}
-                      transition={{ type: "spring", stiffness: 300, damping: 10 }}
-                    >
-                      {lang.icon}
-
-                      {/* Shine effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-3xl"
-                        animate={{ x: ['-100%', '100%'] }}
-                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                      />
-
-                      {/* Floating particles */}
-                      <motion.div
-                        className="absolute -top-2 -right-2 w-3 h-3 bg-yellow-400 rounded-full"
-                        animate={{
-                          scale: [0, 1, 0],
-                          opacity: [0, 1, 0]
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                      />
-                      <motion.div
-                        className="absolute -bottom-2 -left-2 w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{
-                          scale: [0, 1, 0],
-                          opacity: [0, 1, 0]
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                      />
-                    </motion.div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="relative z-10 text-center space-y-4">
-                    <div>
-                      <motion.h3
-                        className="text-2xl font-black text-gray-900 dark:text-white mb-2"
-                        whileHover={{ scale: 1.05 }}
+                    {/* Top Controls */}
+                    <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
+                      {/* Favorite Button */}
+                      <button
+                        className={`p-2 rounded-full backdrop-blur-sm transition-all duration-100 hover:scale-105 ${
+                          favorites.includes(lang.name)
+                            ? 'bg-white/90 text-red-500 shadow-lg'
+                            : 'bg-white/20 text-white hover:bg-white/30'
+                        }`}
+                        onClick={() => toggleFavorite(lang.name)}
                       >
+                        <FaHeart className="w-3 h-3" />
+                      </button>
+
+                      {/* Trending Badge */}
+                      {lang.trend.startsWith('+') && (
+                        <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                          <FiTrendingUp className="w-3 h-3" />
+                          {lang.trend}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Language Icon - Positioned to overlap */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+                      <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full p-1 shadow-lg">
+                        <div className={`w-full h-full bg-gradient-to-r ${lang.gradient} rounded-full flex items-center justify-center text-white text-lg`}>
+                          {lang.icon}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="pt-8 px-5 pb-5">
+                    {/* Language Name and Description */}
+                    <div className="text-center mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-purple-600 group-hover:to-pink-600 transition-all duration-100">
                         {lang.name}
-                      </motion.h3>
-                      <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-4">
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {lang.shortDesc}
                       </p>
                     </div>
 
-                    {/* Enhanced Stats */}
-                    <div className="grid grid-cols-2 gap-4 py-4 border-t border-b border-gray-200/50 dark:border-gray-600/50">
+                    {/* Stats Row */}
+                    <div className="flex justify-center gap-6 mb-4">
                       <div className="text-center">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <FaStar className="text-yellow-500 text-sm" />
-                          <span className="text-lg font-black text-gray-900 dark:text-white">
-                            {lang.popularity}%
-                          </span>
+                        <div className="flex items-center gap-1 text-yellow-500 mb-1">
+                          <FaStar className="w-3 h-3" />
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">{lang.popularity}%</span>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Popularity</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Popular</p>
                       </div>
                       <div className="text-center">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <FaUsers className="text-blue-500 text-sm" />
-                          <span className="text-lg font-black text-gray-900 dark:text-white">
-                            {lang.jobs}
-                          </span>
+                        <div className="flex items-center gap-1 text-blue-500 mb-1">
+                          <FaUsers className="w-3 h-3" />
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">{lang.jobs}</span>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Jobs</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Jobs</p>
                       </div>
                     </div>
 
                     {/* Description */}
-                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2 mb-4 text-center">
                       {lang.description}
                     </p>
 
-                    {/* Enhanced Tags */}
-                    <div className="flex justify-center gap-2 flex-wrap">
-                      <motion.span
-                        className={`px-3 py-2 rounded-2xl text-xs font-bold shadow-lg ${
-                          lang.difficulty === 'Beginner' ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' :
-                          lang.difficulty === 'Intermediate' ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
-                          'bg-gradient-to-r from-red-400 to-pink-500 text-white'
-                        }`}
-                        whileHover={{ scale: 1.1, y: -2 }}
-                      >
-                        <FiAward className="inline mr-1" />
+                    {/* Tags */}
+                    <div className="flex justify-center gap-2 mb-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        lang.difficulty === 'Beginner' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                        lang.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                        'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                      }`}>
                         {lang.difficulty}
-                      </motion.span>
-                      <motion.span
-                        className={`px-3 py-2 rounded-2xl text-xs font-bold bg-gradient-to-r ${lang.gradient} text-white shadow-lg`}
-                        whileHover={{ scale: 1.1, y: -2 }}
-                      >
-                        <FiZap className="inline mr-1" />
+                      </span>
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
                         {lang.category}
-                      </motion.span>
+                      </span>
                     </div>
 
-                    {/* Enhanced Action Buttons */}
-                    <div className="flex gap-3 pt-4">
-                      <motion.a
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <a
                         href={lang.learnMore}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`flex-1 bg-gradient-to-r ${lang.gradient} text-white px-4 py-3 rounded-2xl font-bold text-sm shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group/btn relative overflow-hidden`}
+                        className={`flex-1 bg-gradient-to-r ${lang.gradient} text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-100 flex items-center justify-center gap-2 hover:scale-105`}
                       >
-                        <FaLightbulb className="text-sm group-hover/btn:animate-pulse" />
+                        <FaLightbulb className="w-3 h-3" />
                         <span>Learn</span>
-                        <FaExternalLinkAlt className="text-xs opacity-70" />
+                      </a>
 
-                        {/* Button shine effect */}
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
-                          initial={{ x: "-100%" }}
-                          whileHover={{ x: "100%" }}
-                          transition={{ duration: 0.6 }}
-                        />
-                      </motion.a>
-
-                      <motion.a
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
+                      <a
                         href={lang.examples}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-2xl font-bold text-sm shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group/btn backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50"
+                        className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2.5 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-100 flex items-center justify-center gap-2 hover:scale-105"
                       >
-                        <FaGithub className="text-sm group-hover/btn:scale-110 transition-transform" />
+                        <FaGithub className="w-3 h-3" />
                         <span>Code</span>
-                        <FaExternalLinkAlt className="text-xs opacity-70" />
-                      </motion.a>
+                      </a>
                     </div>
                   </div>
 
-                  {/* Hover Glow Effect */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-r ${lang.gradient} rounded-3xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none`}
-                    animate={{
-                      opacity: hoveredLang === lang.name ? 0.1 : 0
-                    }}
-                  />
+
                 </motion.div>
               ))}
             </motion.div>
@@ -627,8 +524,8 @@ const TrendingLanguages = () => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-gray-700/50"
-                  whileHover={{ scale: 1.02, x: 10 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-100 border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+                  whileHover={{ scale: 1.005, x: 2, transition: { duration: 0.1 } }}
                 >
                   <div className="flex items-center gap-6">
                     {/* Compact Icon */}

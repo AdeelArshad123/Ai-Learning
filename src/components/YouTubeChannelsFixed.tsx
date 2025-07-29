@@ -362,106 +362,99 @@ export default function YouTubeChannelsFixed() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="group relative bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-700 overflow-hidden"
+                    className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200/50 dark:border-gray-700/50"
                     onMouseEnter={() => setHoveredChannel(channel.name)}
                     onMouseLeave={() => setHoveredChannel(null)}
-                    whileHover={{ y: -8, scale: 1.02 }}
+                    whileHover={{ y: -4, scale: 1.01 }}
                   >
-                    {/* Background Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/10 dark:to-pink-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Header Section with Gradient Background */}
+                    <div className="relative h-32 bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 overflow-hidden">
+                      {/* Animated Background Pattern */}
+                      <div className="absolute inset-0 opacity-20">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/30 rounded-full -translate-y-10 translate-x-10"></div>
+                        <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/20 rounded-full translate-y-8 -translate-x-8"></div>
+                        <div className="absolute top-1/2 left-1/2 w-12 h-12 bg-white/10 rounded-full -translate-x-6 -translate-y-6"></div>
+                      </div>
 
-                    {/* Trending Badge */}
-                    {isTrending(channel.subscribers) && (
-                      <motion.div
-                        initial={{ scale: 0, rotate: -45 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        className="absolute top-4 right-4 bg-gradient-to-r from-orange-400 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg"
-                      >
-                        <FaFire className="w-3 h-3" />
-                        Trending
-                      </motion.div>
-                    )}
+                      {/* Top Controls */}
+                      <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
+                        {/* Favorite Button */}
+                        <button
+                          onClick={() => toggleFavorite(channel.name)}
+                          className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
+                            favorites.includes(channel.name)
+                              ? 'bg-white/90 text-red-500 shadow-lg'
+                              : 'bg-white/20 text-white hover:bg-white/30'
+                          }`}
+                        >
+                          <FaHeart className="w-4 h-4" />
+                        </button>
 
-                    {/* Favorite Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => toggleFavorite(channel.name)}
-                      className={`absolute top-4 left-4 p-2 rounded-full transition-all duration-300 ${
-                        favorites.includes(channel.name)
-                          ? 'bg-red-500 text-white shadow-lg'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-400 hover:text-red-500'
-                      }`}
-                    >
-                      <FaHeart className="w-4 h-4" />
-                    </motion.button>
+                        {/* Trending Badge */}
+                        {isTrending(channel.subscribers) && (
+                          <div className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg backdrop-blur-sm">
+                            <FaFire className="w-3 h-3" />
+                            HOT
+                          </div>
+                        )}
+                      </div>
 
-                    {/* Channel Avatar */}
-                    <div className="relative mb-4 flex justify-center">
-                      <motion.div
-                        className="w-20 h-20 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl"
-                        whileHover={{ rotate: 360, scale: 1.1 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <FaYoutube className="text-white text-3xl" />
-                      </motion.div>
-
-                      {/* Play Button Overlay */}
-                      <motion.div
-                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                          <FaPlay className="text-red-500 text-sm ml-0.5" />
+                      {/* Channel Avatar - Positioned to overlap */}
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+                        <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-full p-1 shadow-xl">
+                          <div className="w-full h-full bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <FaYoutube className="text-white text-xl" />
+                          </div>
                         </div>
-                      </motion.div>
-                    </div>
-
-                    {/* Channel Info */}
-                    <div className="relative z-10 text-center mb-4">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
-                        {channel.name}
-                      </h3>
-
-                      <div className="flex items-center justify-center gap-2 mb-3">
-                        <FaUsers className="text-gray-400 w-4 h-4" />
-                        <span className="text-lg font-semibold text-gray-600 dark:text-gray-300">
-                          {channel.subscribers}
-                        </span>
-                        <span className="text-sm text-gray-500">subscribers</span>
-                      </div>
-
-                      <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm font-semibold border border-blue-200 dark:border-blue-700">
-                        <FiCode className="w-3 h-3" />
-                        {channel.language}
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6 line-clamp-3 relative z-10">
-                      {channel.description}
-                    </p>
+                    {/* Content Section */}
+                    <div className="pt-10 px-6 pb-6">
+                      {/* Channel Name */}
+                      <div className="text-center mb-4">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                          {channel.name}
+                        </h3>
 
-                    {/* Action Button */}
-                    <motion.a
-                      href={channel.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative z-10 w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <FaPlayCircle className="w-5 h-5 group-hover/btn:animate-pulse" />
-                      <span>Watch Channel</span>
-                      <FaExternalLinkAlt className="w-4 h-4 opacity-70" />
+                        {/* Language Tag */}
+                        <div className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm font-medium">
+                          <FiCode className="w-3 h-3" />
+                          {channel.language}
+                        </div>
+                      </div>
 
-                      {/* Button shine effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 opacity-0 group-hover/btn:opacity-100"
-                        animate={{ x: ['-100%', '100%'] }}
-                        transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 2 }}
-                      />
-                    </motion.a>
+                      {/* Subscriber Count */}
+                      <div className="flex items-center justify-center gap-2 mb-4">
+                        <div className="flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full">
+                          <FaUsers className="w-3 h-3" />
+                          <span className="text-sm font-semibold">{channel.subscribers}</span>
+                        </div>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">subscribers</span>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6 text-center line-clamp-2">
+                        {channel.description}
+                      </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <a
+                          href={channel.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm group/btn hover:scale-105"
+                        >
+                          <FaPlay className="w-3 h-3" />
+                          <span>Watch</span>
+                        </a>
+
+                        <button className="px-3 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 hover:scale-105">
+                          <FaExternalLinkAlt className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </motion.div>
@@ -479,69 +472,75 @@ export default function YouTubeChannelsFixed() {
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700"
-                    whileHover={{ scale: 1.01 }}
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+                    whileHover={{ scale: 1.005, y: -2 }}
                   >
-                    <div className="flex items-center gap-6">
-                      {/* Avatar */}
-                      <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                        <FaYoutube className="text-white text-xl" />
+                    <div className="flex items-center gap-6 p-6">
+                      {/* Enhanced Avatar */}
+                      <div className="relative flex-shrink-0">
+                        <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-full p-1 shadow-lg">
+                          <div className="w-full h-full bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <FaYoutube className="text-white text-xl" />
+                          </div>
+                        </div>
+                        {isTrending(channel.subscribers) && (
+                          <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                            <FaFire className="text-white text-xs" />
+                          </div>
+                        )}
                       </div>
 
                       {/* Content */}
                       <div className="flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                            {channel.name}
-                          </h3>
-                          <div className="flex items-center gap-2">
-                            {isTrending(channel.subscribers) && (
-                              <div className="bg-gradient-to-r from-orange-400 to-red-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                                <FaFire className="w-3 h-3" />
-                                Trending
-                              </div>
-                            )}
-                            <button
-                              onClick={() => toggleFavorite(channel.name)}
-                              className={`p-2 rounded-full transition-all ${
-                                favorites.includes(channel.name)
-                                  ? 'bg-red-500 text-white'
-                                  : 'bg-gray-100 dark:bg-gray-700 text-gray-400 hover:text-red-500'
-                              }`}
-                            >
-                              <FaHeart className="w-4 h-4" />
-                            </button>
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                              {channel.name}
+                            </h3>
+                            <div className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-medium">
+                              <FiCode className="w-3 h-3" />
+                              {channel.language}
+                            </div>
                           </div>
+                          <button
+                            onClick={() => toggleFavorite(channel.name)}
+                            className={`p-2 rounded-full transition-all duration-200 ${
+                              favorites.includes(channel.name)
+                                ? 'bg-red-500 text-white shadow-lg'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
+                            }`}
+                          >
+                            <FaHeart className="w-4 h-4" />
+                          </button>
                         </div>
 
-                        <div className="flex items-center gap-4 mb-3">
-                          <div className="flex items-center gap-2">
-                            <FaUsers className="text-gray-400 w-4 h-4" />
-                            <span className="font-semibold text-gray-600 dark:text-gray-300">
-                              {channel.subscribers} subscribers
-                            </span>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full">
+                            <FaUsers className="w-3 h-3" />
+                            <span className="text-sm font-semibold">{channel.subscribers}</span>
                           </div>
-                          <div className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm font-semibold">
-                            {channel.language}
-                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">subscribers</span>
                         </div>
 
-                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                        <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm leading-relaxed">
                           {channel.description}
                         </p>
 
-                        <motion.a
-                          href={channel.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <FaPlayCircle className="w-4 h-4" />
-                          Watch Channel
-                          <FaExternalLinkAlt className="w-3 h-3 opacity-70" />
-                        </motion.a>
+                        <div className="flex gap-2">
+                          <a
+                            href={channel.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                          >
+                            <FaPlay className="w-3 h-3" />
+                            Watch Channel
+                          </a>
+
+                          <button className="px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                            <FaExternalLinkAlt className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

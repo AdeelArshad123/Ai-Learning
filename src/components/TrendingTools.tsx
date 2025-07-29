@@ -44,45 +44,154 @@ function getLanguageColor(language: string) {
   return colors[language] || colors.default;
 }
 
+// Fallback repositories data
+const fallbackRepos: Repository[] = [
+  {
+    id: 1,
+    name: "next.js",
+    description: "The React Framework for the Web",
+    stargazers_count: 115000,
+    html_url: "https://github.com/vercel/next.js",
+    language: "JavaScript",
+    owner: {
+      login: "vercel",
+      avatar_url: "https://avatars.githubusercontent.com/u/14985020?v=4"
+    }
+  },
+  {
+    id: 2,
+    name: "tailwindcss",
+    description: "A utility-first CSS framework for rapid UI development",
+    stargazers_count: 73000,
+    html_url: "https://github.com/tailwindlabs/tailwindcss",
+    language: "JavaScript",
+    owner: {
+      login: "tailwindlabs",
+      avatar_url: "https://avatars.githubusercontent.com/u/67109815?v=4"
+    }
+  },
+  {
+    id: 3,
+    name: "typescript",
+    description: "TypeScript is JavaScript with syntax for types",
+    stargazers_count: 94000,
+    html_url: "https://github.com/microsoft/TypeScript",
+    language: "TypeScript",
+    owner: {
+      login: "microsoft",
+      avatar_url: "https://avatars.githubusercontent.com/u/6154722?v=4"
+    }
+  },
+  {
+    id: 4,
+    name: "react",
+    description: "A declarative, efficient, and flexible JavaScript library for building user interfaces",
+    stargazers_count: 220000,
+    html_url: "https://github.com/facebook/react",
+    language: "JavaScript",
+    owner: {
+      login: "facebook",
+      avatar_url: "https://avatars.githubusercontent.com/u/69631?v=4"
+    }
+  },
+  {
+    id: 5,
+    name: "vue",
+    description: "Vue.js is a progressive, incrementally-adoptable JavaScript framework",
+    stargazers_count: 206000,
+    html_url: "https://github.com/vuejs/vue",
+    language: "JavaScript",
+    owner: {
+      login: "vuejs",
+      avatar_url: "https://avatars.githubusercontent.com/u/6128107?v=4"
+    }
+  },
+  {
+    id: 6,
+    name: "python",
+    description: "The Python programming language",
+    stargazers_count: 55000,
+    html_url: "https://github.com/python/cpython",
+    language: "Python",
+    owner: {
+      login: "python",
+      avatar_url: "https://avatars.githubusercontent.com/u/1525981?v=4"
+    }
+  },
+  {
+    id: 7,
+    name: "django",
+    description: "The Web framework for perfectionists with deadlines",
+    stargazers_count: 75000,
+    html_url: "https://github.com/django/django",
+    language: "Python",
+    owner: {
+      login: "django",
+      avatar_url: "https://avatars.githubusercontent.com/u/27804?v=4"
+    }
+  },
+  {
+    id: 8,
+    name: "express",
+    description: "Fast, unopinionated, minimalist web framework for node",
+    stargazers_count: 63000,
+    html_url: "https://github.com/expressjs/express",
+    language: "JavaScript",
+    owner: {
+      login: "expressjs",
+      avatar_url: "https://avatars.githubusercontent.com/u/5658226?v=4"
+    }
+  },
+  {
+    id: 9,
+    name: "angular",
+    description: "The modern web developer's platform",
+    stargazers_count: 93000,
+    html_url: "https://github.com/angular/angular",
+    language: "TypeScript",
+    owner: {
+      login: "angular",
+      avatar_url: "https://avatars.githubusercontent.com/u/139426?v=4"
+    }
+  }
+]
+
 export default function TrendingTools() {
-  const [repos, setRepos] = useState<Repository[]>([])
+  const [repos, setRepos] = useState<Repository[]>(fallbackRepos)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [usingFallback, setUsingFallback] = useState(false)
 
   useEffect(() => {
     const fetchTrendingRepos = async () => {
       try {
-        const response = await axios.get('/api/get-trending')
-        setRepos(response.data)
+        const response = await axios.get('/api/get-trending', {
+          timeout: 5000 // 5 second timeout
+        })
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          setRepos(response.data)
+          setUsingFallback(false)
+        } else {
+          setUsingFallback(true)
+        }
         setLoading(false)
       } catch (err: any) {
-        const errorMessage = err.response?.data?.error || 'Failed to fetch trending repositories'
-        setError(errorMessage)
+        console.log('API failed, using fallback data:', err.message)
+        setUsingFallback(true)
         setLoading(false)
+        // Don't set error, just use fallback data
       }
     }
 
-    fetchTrendingRepos()
+    // Add a small delay to show loading state
+    setTimeout(fetchTrendingRepos, 500)
   }, [])
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-red-500 mb-4">{error}</div>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="btn-primary"
-        >
-          Try Again
-        </button>
+      <div className="flex flex-col justify-center items-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-400">Loading trending repositories...</p>
       </div>
     )
   }
@@ -103,69 +212,88 @@ export default function TrendingTools() {
 
   return (
     <div className="my-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {/* Status Banner */}
+      {usingFallback && (
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+          <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+            <FaGithub className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              Showing curated popular repositories (GitHub API temporarily unavailable)
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredRepos.map((repo, idx) => (
           <motion.div
             key={repo.id}
-            className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden flex flex-col h-full min-h-[180px]"
+            className="relative bg-white dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 group flex flex-col h-full"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: idx * 0.05 }}
-            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ duration: 0.3, delay: idx * 0.03 }}
+            whileHover={{ scale: 1.01, y: -4 }}
           >
-            {/* New badge */}
-            {isNewRepo(repo.created_at) && (
-              <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full z-10">NEW</span>
-            )}
-            
-            {/* Header with avatar and name */}
-            <div className="flex items-center gap-3 mb-3">
-              <img 
-                src={repo.owner.avatar_url} 
-                alt={repo.owner.login}
-                className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600"
-              />
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-primary transition-colors">
-                  {repo.name}
-                </h3>
-                <a 
-                  href={`https://github.com/${repo.owner.login}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-gray-500 hover:text-primary"
-                >
-                  {repo.owner.login}
-                </a>
+            {/* Header Section */}
+            <div className="relative p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+              {/* New badge */}
+              {isNewRepo(repo.created_at) && (
+                <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">NEW</span>
+              )}
+
+              {/* Owner info */}
+              <div className="flex items-center gap-3 mb-3">
+                <img
+                  src={repo.owner.avatar_url}
+                  alt={repo.owner.login}
+                  className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-600 shadow-md"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {repo.name}
+                  </h3>
+                  <a
+                    href={`https://github.com/${repo.owner.login}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    @{repo.owner.login}
+                  </a>
+                </div>
+              </div>
+
+              {/* Stars */}
+              <div className="flex items-center gap-1 text-yellow-600 dark:text-yellow-400">
+                <FaStar className="w-4 h-4" />
+                <span className="text-sm font-semibold">{repo.stargazers_count.toLocaleString()}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">stars</span>
               </div>
             </div>
             
-            {/* Description */}
-            <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-3 min-h-[36px] leading-relaxed">
-              {repo.description}
-            </p>
-            
-            {/* Footer with language and stats */}
-            <div className="mt-auto space-y-2">
-              <div className="flex items-center justify-between">
-                <span className={`text-xs font-medium px-2 py-1 rounded-md ${getLanguageColor(repo.language)} flex items-center gap-1`}>
-                  <FaCode className="text-xs" />
+            {/* Content Section */}
+            <div className="p-4 flex-1 flex flex-col">
+              {/* Language Tag */}
+              <div className="mb-3">
+                <span className={`inline-flex items-center gap-1 text-xs font-medium px-3 py-1 rounded-full ${getLanguageColor(repo.language)}`}>
+                  <FaCode className="w-3 h-3" />
                   {repo.language}
                 </span>
-                <span className="text-xs text-gray-500 flex items-center">
-                  <FaStar className="mr-1 text-yellow-500 text-xs" />
-                  {repo.stargazers_count.toLocaleString()}
-                </span>
               </div>
-              
-              {/* View button */}
+
+              {/* Description */}
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed flex-1">
+                {repo.description}
+              </p>
+
+              {/* Action Button */}
               <a
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-primary text-white text-xs px-3 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-1"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-sm px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
               >
-                <FaGithub className="text-xs" />
+                <FaGithub className="w-4 h-4" />
                 View Repository
               </a>
             </div>
