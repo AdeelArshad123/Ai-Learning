@@ -2,23 +2,16 @@
 
 import { motion } from 'framer-motion'
 import TrendingTools from '@/components/TrendingTools'
-import AICodeGenerator from '@/components/AICodeGenerator'
 import YouTubeChannels from '@/components/YouTubeChannelsFixed'
 import Dashboard from '@/components/Dashboard'
 import SearchBar from '@/components/SearchBar'
-import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
+import { 
+  LazyAICodeGenerator,
+  LazyTopicQuiz,
+  LazyAITutor
+} from '@/components/LazyComponents'
 
-// Lazy load heavy components
-const TopicQuiz = dynamic(() => import('@/components/TopicQuiz'), {
-  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
-})
-const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
-  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
-})
-const AITutor = dynamic(() => import('@/components/AITutor'), {
-  ssr: false // Don't render on server
-})
 import { FaReact, FaGithub, FaDatabase, FaStripe, FaYoutube, FaPalette, FaBook, FaCode, FaServer, FaCloud, FaIcons, FaRegLightbulb, FaRocket, FaCogs } from 'react-icons/fa';
 import { FiBookOpen, FiCheck, FiTrendingUp, FiBarChart, FiAward, FiHelpCircle } from 'react-icons/fi';
 import RecommendedResources from '@/components/RecommendedResources';
@@ -55,7 +48,7 @@ export default function Home() {
 
       {/* Quiz Generator Section */}
       <section id="quizzes" className="container mx-auto px-4 mb-24">
-        <TopicQuiz language="JavaScript" topic="Async/Await" />
+        <LazyTopicQuiz language="JavaScript" topic="Async/Await" />
       </section>
 
       <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
@@ -107,7 +100,7 @@ export default function Home() {
               Generate AI-powered code examples with explanations, key learning points, and multiple programming languages.
             </p>
           </motion.div>
-          <AICodeGenerator />
+          <LazyAICodeGenerator />
         </div>
       </section>
 
@@ -135,7 +128,7 @@ export default function Home() {
       )}
 
       {/* AI Tutor Chat */}
-      <AITutor
+      <LazyAITutor
         isOpen={isTutorOpen}
         onToggle={() => setIsTutorOpen(!isTutorOpen)}
       />

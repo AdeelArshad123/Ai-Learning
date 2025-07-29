@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
+import { apiCache } from '@/lib/cache'
 
 // Fallback data in case GitHub API fails
 const fallbackData = [
@@ -43,6 +44,14 @@ const fallbackData = [
 
 export async function GET() {
   try {
+    // Check cache first
+    const cacheKey = 'trending-repos'
+    const cachedData = apiCache.get(cacheKey)
+    if (cachedData) {
+      console.log('Returning cached trending repositories')
+      return NextResponse.json(cachedData)
+    }
+
     // Use a simpler query that doesn't require authentication
     const response = await axios.get('https://api.github.com/search/repositories', {
       params: {
@@ -69,6 +78,9 @@ export async function GET() {
         avatar_url: repo.owner.avatar_url,
       },
     }))
+
+    // Cache the result for 15 minutes
+    apiCache.set(cacheKey, repositories, 15)
 
     return NextResponse.json(repositories)
   } catch (error: any) {

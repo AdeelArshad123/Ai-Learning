@@ -4,12 +4,17 @@ import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Providers from '@/components/Providers'
+import ErrorBoundary from '@/components/ErrorBoundary'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'CodeLearner - Learn Programming with AI',
   description: 'Learn programming languages, tools, and concepts with AI-powered examples and quizzes',
+  keywords: 'programming, coding, AI, learning, tutorials, JavaScript, Python, React',
+  authors: [{ name: 'CodeLearner Team' }],
+  viewport: 'width=device-width, initial-scale=1',
+  themeColor: '#3b82f6',
 }
 
 export default function RootLayout({
@@ -20,13 +25,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-background min-h-screen flex flex-col`}>
-        <Providers>
-          <Header />
-          <main className="flex-1 pt-20">
-            {children}
-          </main>
-          <Footer />
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            <Header />
+            <main className="flex-1 pt-20">
+              {children}
+            </main>
+            <Footer />
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   )
