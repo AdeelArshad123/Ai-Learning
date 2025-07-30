@@ -17,7 +17,8 @@ import {
   FiZap,
   FiAward,
   FiClock,
-  FiBarChart
+  FiBarChart,
+  FiHelpCircle
 } from 'react-icons/fi'
 import {
   FaRocket,
@@ -33,10 +34,10 @@ import {
   FaRobot,
   FaMagic,
   FaEye,
-  FaBolt
+  FaBolt,
+  FaRegLightbulb
 } from 'react-icons/fa'
 import { useNotifications } from '@/components/NotificationProvider'
-import type { NotificationContextType } from '@/types/notifications'
 
 // Enhanced interfaces for the AI-powered dashboard
 interface QuickAction {
