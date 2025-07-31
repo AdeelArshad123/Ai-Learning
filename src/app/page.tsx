@@ -31,8 +31,9 @@ import AILearningAssistant from '@/components/AILearningAssistant'
 import AIQuizGenerator from '@/components/AIQuizGenerator'
 import AIRoadmapGenerator from '@/components/AIRoadmapGenerator'
 import AILearningAnalytics from '@/components/AILearningAnalytics'
-import AISearchBar from '@/components/AISearchBar'
+import AISearchBarSimple from '@/components/AISearchBarSimple'
 import FloatingAIButton from '@/components/FloatingAIButton'
+import AIAPIGenerator from '@/components/AIAPIGenerator'
 const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
   loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
 })
@@ -105,7 +106,7 @@ export default function Home() {
               <div className="h-12 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
             </div>
           }>
-            <AISearchBar />
+            <AISearchBarSimple />
           </ClientOnly>
         </div>
       </section>
@@ -142,6 +143,13 @@ export default function Home() {
 
 
 
+        </div>
+      </section>
+
+      {/* AI API Generator Section */}
+      <section id="ai-api-generator" className="container mx-auto px-4 mb-24">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+          <AIAPIGenerator />
         </div>
       </section>
 
