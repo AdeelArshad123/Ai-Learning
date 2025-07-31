@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, ReactNode } from 'react'
-import { NotificationCenter } from './NotificationSystem'
+import { NotificationCenter } from '@/components/NotificationSystem'
 
 interface Notification {
   id: string

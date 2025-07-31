@@ -2,17 +2,18 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  FiSearch, 
-  FiX, 
-  FiMic, 
-  FiMicOff, 
-  FiZap, 
+import {
+  FiSearch,
+  FiX,
+  FiMic,
+  FiMicOff,
+  FiZap,
   FiTrendingUp,
   FiBookOpen,
   FiCode,
   FiVideo,
-  FiUsers
+  FiUsers,
+  FiExternalLink
 } from 'react-icons/fi'
 import { 
   FaBrain, 
@@ -42,6 +43,8 @@ interface SearchResult {
   aiRecommended?: boolean
   estimatedTime?: string
   icon: any
+  url?: string
+  externalUrl?: string
 }
 
 export default function AISearchBar() {
@@ -77,7 +80,8 @@ export default function AISearchBar() {
       relevanceScore: 98,
       aiRecommended: true,
       estimatedTime: '4 hours',
-      icon: FiBookOpen
+      icon: FiBookOpen,
+      externalUrl: 'https://nextjs.org/learn/foundations/about-nextjs'
     },
     {
       id: '2',
@@ -88,7 +92,8 @@ export default function AISearchBar() {
       relevanceScore: 96,
       aiRecommended: true,
       estimatedTime: '8 hours',
-      icon: FiCode
+      icon: FiCode,
+      externalUrl: 'https://github.com/vercel/commerce'
     },
     {
       id: '3',
@@ -99,7 +104,8 @@ export default function AISearchBar() {
       relevanceScore: 94,
       aiRecommended: true,
       estimatedTime: '3 hours',
-      icon: FiVideo
+      icon: FiVideo,
+      externalUrl: 'https://nextjs.org/docs/api-routes/introduction'
     },
     {
       id: '4',
@@ -110,7 +116,8 @@ export default function AISearchBar() {
       relevanceScore: 92,
       aiRecommended: true,
       estimatedTime: '6 hours',
-      icon: FiCode
+      icon: FiCode,
+      externalUrl: 'https://github.com/vercel/next.js/tree/canary/examples/with-mongodb'
     },
     {
       id: '5',
@@ -120,7 +127,8 @@ export default function AISearchBar() {
       difficulty: 'intermediate',
       relevanceScore: 90,
       estimatedTime: '2 hours',
-      icon: FiBookOpen
+      icon: FiBookOpen,
+      externalUrl: 'https://nextjs.org/docs/deployment'
     },
     // React Results
     {
@@ -132,7 +140,8 @@ export default function AISearchBar() {
       relevanceScore: 88,
       aiRecommended: true,
       estimatedTime: '45 min',
-      icon: FiBookOpen
+      icon: FiBookOpen,
+      externalUrl: 'https://react.dev/reference/react'
     },
     {
       id: '7',
@@ -143,7 +152,8 @@ export default function AISearchBar() {
       relevanceScore: 85,
       aiRecommended: true,
       estimatedTime: '2 hours',
-      icon: FiCode
+      icon: FiCode,
+      externalUrl: 'https://react.dev/learn/tutorial-tic-tac-toe'
     },
     // JavaScript Results
     {
@@ -154,7 +164,8 @@ export default function AISearchBar() {
       difficulty: 'beginner',
       relevanceScore: 82,
       estimatedTime: '1 hour',
-      icon: FiBookOpen
+      icon: FiBookOpen,
+      externalUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide'
     },
     {
       id: '9',
@@ -164,7 +175,8 @@ export default function AISearchBar() {
       difficulty: 'intermediate',
       relevanceScore: 89,
       estimatedTime: '2.5 hours',
-      icon: FiVideo
+      icon: FiVideo,
+      externalUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises'
     },
     // Full-Stack General Results
     {
@@ -176,7 +188,8 @@ export default function AISearchBar() {
       relevanceScore: 91,
       aiRecommended: true,
       estimatedTime: '10 hours',
-      icon: FiVideo
+      icon: FiVideo,
+      externalUrl: 'https://www.mongodb.com/mern-stack'
     },
     {
       id: '11',
@@ -186,7 +199,8 @@ export default function AISearchBar() {
       difficulty: 'advanced',
       relevanceScore: 87,
       estimatedTime: '3 hours',
-      icon: FiBookOpen
+      icon: FiBookOpen,
+      externalUrl: 'https://jwt.io/introduction'
     },
     {
       id: '12',
@@ -196,7 +210,8 @@ export default function AISearchBar() {
       difficulty: 'intermediate',
       relevanceScore: 84,
       estimatedTime: '2 hours',
-      icon: FiBookOpen
+      icon: FiBookOpen,
+      externalUrl: 'https://restfulapi.net/'
     }
   ]
 
@@ -379,11 +394,54 @@ export default function AISearchBar() {
       setSelectedIndex(prev => prev > 0 ? prev - 1 : prev)
     } else if (e.key === 'Enter' && selectedIndex >= 0) {
       e.preventDefault()
-      // Handle selection
+      if (results.length > 0 && selectedIndex < results.length) {
+        // Open the selected search result
+        handleResultClick(results[selectedIndex])
+      } else if (suggestions.length > 0 && selectedIndex < suggestions.length) {
+        // Use the selected suggestion as query
+        setQuery(suggestions[selectedIndex])
+      }
     } else if (e.key === 'Escape') {
       setIsOpen(false)
       inputRef.current?.blur()
     }
+  }
+
+  // Handle search result click
+  const handleResultClick = (result: SearchResult) => {
+    if (result.externalUrl) {
+      // Open external URL in new tab
+      window.open(result.externalUrl, '_blank', 'noopener,noreferrer')
+
+      // Show a brief success message
+      console.log(`Opening: ${result.title}`)
+    } else if (result.url) {
+      // Navigate to internal URL
+      window.location.href = result.url
+    } else {
+      // Fallback: show more details or navigate to a default page
+      console.log('Clicked on result:', result.title)
+      alert(`This would open: ${result.title}\n\nDescription: ${result.description}`)
+    }
+
+    // Close the search dropdown
+    setIsOpen(false)
+    setQuery('')
+
+    // Optional: Track the click for analytics
+    trackSearchResultClick(result)
+  }
+
+  // Track search result clicks for analytics
+  const trackSearchResultClick = (result: SearchResult) => {
+    // This could send analytics data to your backend
+    console.log('Search result clicked:', {
+      resultId: result.id,
+      title: result.title,
+      type: result.type,
+      aiRecommended: result.aiRecommended,
+      query: query
+    })
   }
 
   const getDifficultyColor = (difficulty: string) => {
@@ -488,9 +546,10 @@ export default function AISearchBar() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-                      selectedIndex === index 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800' 
+                    onClick={() => handleResultClick(result)}
+                    className={`p-3 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-md ${
+                      selectedIndex === index
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
                         : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
                     }`}
                   >
@@ -539,6 +598,12 @@ export default function AISearchBar() {
                               {result.relevanceScore}% match
                             </span>
                           </div>
+                          {result.externalUrl && (
+                            <div className="flex items-center gap-1 text-blue-500">
+                              <FiExternalLink className="w-3 h-3" />
+                              <span className="text-xs">External Link</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
