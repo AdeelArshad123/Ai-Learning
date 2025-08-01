@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  FaRobot, 
-  FaRoute, 
-  FaGraduationCap, 
-  FaClock, 
-  FaCheckCircle, 
+import {
+  FaRobot,
+  FaRoute,
+  FaGraduationCap,
+  FaClock,
+  FaCheckCircle,
   FaArrowRight,
   FaUser,
   FaCode,
@@ -26,7 +26,16 @@ import {
   FaUsers,
   FaLightbulb,
   FaBolt,
-  FaBookmark
+  FaBookmark,
+  FaYoutube,
+  FaBook,
+  FaExternalLinkAlt,
+  FaDiscord,
+  FaReddit,
+  FaGithub,
+  FaLink,
+  FaPlay,
+  FaFileAlt
 } from 'react-icons/fa'
 
 interface UserProfile {
@@ -545,6 +554,218 @@ export default function AIRoadmapGenerator() {
             )
           })}
         </div>
+
+        {/* Comprehensive Learning Resources Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-700"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-purple-100 dark:bg-purple-800 rounded-lg">
+              <FaGraduationCap className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                Complete Learning Resources
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Curated resources to accelerate your learning journey
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* YouTube Channels */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <FaYoutube className="w-5 h-5 text-red-500" />
+                <h4 className="font-semibold text-gray-900 dark:text-white">Top YouTube Channels</h4>
+              </div>
+              <div className="space-y-3">
+                {generatedRoadmap.steps
+                  .filter(step => step.learningResources?.youtubeChannels)
+                  .slice(0, 2)
+                  .flatMap(step => step.learningResources!.youtubeChannels.slice(0, 3))
+                  .map((channel, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <FaYoutube className="w-4 h-4 text-red-500 mt-1 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={channel.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline block truncate"
+                        >
+                          {channel.name}
+                        </a>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                          {channel.description}
+                        </p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {channel.subscribers} subscribers
+                        </span>
+                      </div>
+                      <FaExternalLinkAlt className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Documentation & Books */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <FaBook className="w-5 h-5 text-blue-500" />
+                <h4 className="font-semibold text-gray-900 dark:text-white">Documentation & Books</h4>
+              </div>
+              <div className="space-y-3">
+                {generatedRoadmap.steps
+                  .filter(step => step.learningResources?.documentation || step.learningResources?.books)
+                  .slice(0, 2)
+                  .flatMap(step => [
+                    ...(step.learningResources?.documentation?.slice(0, 2) || []).map(doc => ({ ...doc, type: 'doc' })),
+                    ...(step.learningResources?.books?.slice(0, 1) || []).map(book => ({ ...book, type: 'book', name: book.title, url: book.url || '#' }))
+                  ])
+                  .slice(0, 4)
+                  .map((resource, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      {resource.type === 'doc' ? (
+                        <FaFileAlt className="w-4 h-4 text-blue-500 mt-1 flex-shrink-0" />
+                      ) : (
+                        <FaBook className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={resource.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline block truncate"
+                        >
+                          {resource.name}
+                        </a>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                          {resource.description}
+                        </p>
+                        {resource.type === 'book' && 'free' in resource && resource.free && (
+                          <span className="inline-block px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded mt-1">
+                            Free
+                          </span>
+                        )}
+                      </div>
+                      <FaExternalLinkAlt className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Practice Websites */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <FaCode className="w-5 h-5 text-green-500" />
+                <h4 className="font-semibold text-gray-900 dark:text-white">Practice Platforms</h4>
+              </div>
+              <div className="space-y-3">
+                {generatedRoadmap.steps
+                  .filter(step => step.learningResources?.practiceWebsites)
+                  .slice(0, 2)
+                  .flatMap(step => step.learningResources!.practiceWebsites.slice(0, 2))
+                  .map((site, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <FaCode className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={site.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline block truncate"
+                        >
+                          {site.name}
+                        </a>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                          {site.description}
+                        </p>
+                        <span className="inline-block px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded mt-1">
+                          {site.difficulty}
+                        </span>
+                      </div>
+                      <FaExternalLinkAlt className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Communities */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <FaUsers className="w-5 h-5 text-purple-500" />
+                <h4 className="font-semibold text-gray-900 dark:text-white">Learning Communities</h4>
+              </div>
+              <div className="space-y-3">
+                {generatedRoadmap.steps
+                  .filter(step => step.learningResources?.communities)
+                  .slice(0, 2)
+                  .flatMap(step => step.learningResources!.communities.slice(0, 2))
+                  .map((community, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      {community.platform === 'Discord' ? (
+                        <FaDiscord className="w-4 h-4 text-indigo-500 mt-1 flex-shrink-0" />
+                      ) : community.platform === 'Reddit' ? (
+                        <FaReddit className="w-4 h-4 text-orange-500 mt-1 flex-shrink-0" />
+                      ) : community.platform === 'GitHub' ? (
+                        <FaGithub className="w-4 h-4 text-gray-600 dark:text-gray-300 mt-1 flex-shrink-0" />
+                      ) : (
+                        <FaLink className="w-4 h-4 text-purple-500 mt-1 flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={community.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline block truncate"
+                        >
+                          {community.name}
+                        </a>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                          {community.description}
+                        </p>
+                        <span className="inline-block px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded mt-1">
+                          {community.platform}
+                        </span>
+                      </div>
+                      <FaExternalLinkAlt className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Access to All Resources */}
+          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+                  Ready to Start Learning?
+                </h5>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Access all resources and start your journey with the first step
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const firstIncompleteStep = generatedRoadmap.steps.find(step => !step.isCompleted)
+                  if (firstIncompleteStep && firstIncompleteStep.resources.length > 0) {
+                    window.open(firstIncompleteStep.resources[0].url, '_blank')
+                  }
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <FaPlay className="w-4 h-4" />
+                Start Learning
+              </button>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Compact Milestones & Achievements */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
