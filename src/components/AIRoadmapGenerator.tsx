@@ -8,7 +8,9 @@ import {
   FaGraduationCap,
   FaClock,
   FaCheckCircle,
+  FaCheck,
   FaArrowRight,
+  FaArrowLeft,
   FaUser,
   FaCode,
   FaLaptopCode,
@@ -852,35 +854,114 @@ export default function AIRoadmapGenerator() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-      {/* Compact Header */}
-      <div className="text-center mb-6">
-        <div className="flex items-center justify-center mb-3">
-          <FaRobot className="text-3xl text-blue-500 mr-2" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            AI Roadmap Generator
-          </h2>
-        </div>
-        <p className="text-sm text-gray-600 dark:text-gray-300">
-          Get your personalized learning path in 5 quick steps
-        </p>
+    <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 rounded-3xl p-8 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-400/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Compact Progress Bar */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Step {currentStep} of 5
-          </span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {Math.round((currentStep / 5) * 100)}% Complete
-          </span>
+      {/* Enhanced Header */}
+      <div className="relative text-center mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-center mb-4"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-lg opacity-30 animate-pulse" />
+            <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full">
+              <FaRobot className="text-3xl text-white" />
+            </div>
+          </div>
+        </motion.div>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3"
+        >
+          AI Learning Roadmap Generator
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
+        >
+          Create your personalized learning journey with AI-powered recommendations
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-center gap-2 mt-4"
+        >
+          <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">🤖 AI-Powered</span>
+          </div>
+          <div className="flex items-center gap-1 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+            <span className="text-sm font-medium text-purple-700 dark:text-purple-300">⚡ Personalized</span>
+          </div>
+          <div className="flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+            <span className="text-sm font-medium text-green-700 dark:text-green-300">🎯 Goal-Oriented</span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Enhanced Progress Bar */}
+      <div className="relative mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <FaRoute className="text-blue-500" />
+            <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              Step {currentStep} of 5
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {Math.round((currentStep / 5) * 100)}% Complete
+            </span>
+            <div className="flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+              <FaCheckCircle className="w-3 h-3 text-green-600" />
+              <span className="text-xs font-medium text-green-700 dark:text-green-300">
+                {currentStep - 1} Done
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-          <div
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 5) * 100}%` }}
-          ></div>
+
+        {/* Step Indicators */}
+        <div className="flex items-center justify-between mb-4">
+          {[1, 2, 3, 4, 5].map((step) => (
+            <div key={step} className="flex flex-col items-center">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                step < currentStep
+                  ? 'bg-green-500 text-white shadow-lg'
+                  : step === currentStep
+                    ? 'bg-blue-500 text-white shadow-lg animate-pulse'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
+              }`}>
+                {step < currentStep ? <FaCheck className="w-4 h-4" /> : step}
+              </div>
+              <span className={`text-xs mt-2 font-medium ${
+                step <= currentStep ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
+              }`}>
+                {step === 1 ? 'Profile' : step === 2 ? 'Interests' : step === 3 ? 'Goals' : step === 4 ? 'Time' : 'Learning'}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Progress Bar */}
+        <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+          <motion.div
+            className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full shadow-lg"
+            initial={{ width: 0 }}
+            animate={{ width: `${(currentStep / 5) * 100}%` }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
         </div>
       </div>
 
@@ -889,69 +970,85 @@ export default function AIRoadmapGenerator() {
         {currentStep === 1 && (
           <motion.div
             key="step1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            initial={{ opacity: 0, x: 50, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -50, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700"
           >
-            <div className="text-center">
-              <FaUser className="text-3xl text-blue-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Let's get to know you!
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="relative inline-block mb-4"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-lg opacity-30 animate-pulse" />
+                <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full">
+                  <FaUser className="text-3xl text-white" />
+                </div>
+              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                Welcome to Your Learning Journey! 👋
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Tell us about yourself so we can create the perfect learning path
+              <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                Let's start by getting to know you better so we can create the perfect learning path
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  What's your name?
+            <div className="space-y-6">
+              <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                  What should we call you? ✨
                 </label>
-                <input
-                  type="text"
-                  value={userProfile.name}
-                  onChange={(e) => setUserProfile(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Enter your name"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={userProfile.name}
+                    onChange={(e) => setUserProfile(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter your name (e.g., Alex, Sarah, John)"
+                    className="w-full px-6 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-lg placeholder-gray-400"
+                  />
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                    {userProfile.name && <FaCheckCircle className="text-green-500 w-5 h-5" />}
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  What's your programming experience?
+              <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                  What's your programming experience level? 🚀
                 </label>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {experienceOptions.map((option) => (
-                    <label
+                    <button
                       key={option.value}
-                      className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all ${
+                      onClick={() => setUserProfile(prev => ({ ...prev, experience: option.value as any }))}
+                      className={`p-4 border-2 rounded-xl text-left transition-all duration-200 hover:scale-105 ${
                         userProfile.experience === option.value
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500'
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="experience"
-                        value={option.value}
-                        checked={userProfile.experience === option.value}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, experience: e.target.value as any }))}
-                        className="sr-only"
-                      />
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900 dark:text-white">
-                          {option.label}
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">
+                          {option.value === 'complete-beginner' ? '🌱' :
+                           option.value === 'some-basics' ? '🌿' :
+                           option.value === 'intermediate' ? '🌳' : '🏆'}
+                        </span>
+                        <div>
+                          <div className="font-semibold text-gray-900 dark:text-white">
+                            {option.label}
+                          </div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {option.desc}
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-300">
-                          {option.desc}
-                        </div>
+                        {userProfile.experience === option.value && (
+                          <FaCheckCircle className="text-blue-500 ml-auto w-5 h-5" />
+                        )}
                       </div>
-                      {userProfile.experience === option.value && (
-                        <FaCheckCircle className="text-blue-500" />
-                      )}
-                    </label>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -962,40 +1059,94 @@ export default function AIRoadmapGenerator() {
         {currentStep === 2 && (
           <motion.div
             key="step2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            initial={{ opacity: 0, x: 50, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -50, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700"
           >
-            <div className="text-center">
-              <FaCode className="text-3xl text-blue-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                What interests you most?
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="relative inline-block mb-4"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-lg opacity-30 animate-pulse" />
+                <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-full">
+                  <FaCode className="text-3xl text-white" />
+                </div>
+              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                What sparks your interest? 🎯
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Select the areas you'd like to focus on (choose multiple)
+              <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                Choose the areas you're passionate about. You can select multiple options!
               </p>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Selected: {userProfile.interests.length}
+                </span>
+                <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
+                    💡 Pick 2-4 for best results
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {interestOptions.map((interest) => (
-                <button
-                  key={interest}
-                  onClick={() => toggleInterest(interest)}
-                  className={`p-3 border rounded-lg text-left transition-all ${
-                    userProfile.interests.includes(interest)
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-blue-300 text-gray-700 dark:text-gray-300'
-                  }`}
-                >
-                  <div className="font-medium text-xs">
-                    {interest}
-                  </div>
-                  {userProfile.interests.includes(interest) && (
-                    <FaCheckCircle className="text-blue-500 mt-1 w-3 h-3" />
-                  )}
-                </button>
-              ))}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {interestOptions.map((interest, index) => {
+                const isSelected = userProfile.interests.includes(interest)
+                const icons = {
+                  'Web Development': '🌐',
+                  'Mobile Apps': '📱',
+                  'Data Science': '📊',
+                  'AI/Machine Learning': '🤖',
+                  'Game Development': '🎮',
+                  'DevOps': '⚙️',
+                  'Cybersecurity': '🔒',
+                  'Blockchain': '⛓️',
+                  'Cloud Computing': '☁️',
+                  'Desktop Apps': '💻',
+                  'IoT': '🌐',
+                  'AR/VR': '🥽'
+                }
+                return (
+                  <motion.button
+                    key={interest}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => toggleInterest(interest)}
+                    className={`relative p-4 border-2 rounded-xl text-center transition-all duration-200 hover:scale-105 group ${
+                      isSelected
+                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-lg'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500'
+                    }`}
+                  >
+                    <div className="text-2xl mb-2">
+                      {icons[interest as keyof typeof icons] || '💡'}
+                    </div>
+                    <div className={`font-semibold text-sm ${
+                      isSelected
+                        ? 'text-purple-700 dark:text-purple-300'
+                        : 'text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {interest}
+                    </div>
+                    {isSelected && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-2 -right-2 bg-purple-500 text-white rounded-full p-1"
+                      >
+                        <FaCheckCircle className="w-4 h-4" />
+                      </motion.div>
+                    )}
+                  </motion.button>
+                )
+              })}
             </div>
           </motion.div>
         )}
@@ -1146,56 +1297,96 @@ export default function AIRoadmapGenerator() {
         )}
       </AnimatePresence>
 
-      {/* Navigation Buttons */}
-      <div className="flex justify-between mt-8">
-        <button
-          onClick={handleBack}
-          disabled={currentStep === 1}
-          className={`px-6 py-3 rounded-lg font-medium transition-all ${
-            currentStep === 1
-              ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-              : 'bg-gray-500 text-white hover:bg-gray-600'
-          }`}
-        >
-          Back
-        </button>
+      {/* Enhanced Navigation Buttons */}
+      <div className="relative mt-8">
+        <div className="flex items-center justify-between">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleBack}
+            disabled={currentStep === 1}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              currentStep === 1
+                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-lg hover:shadow-xl'
+            }`}
+          >
+            <FaArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </motion.button>
 
-        <button
-          onClick={handleNext}
-          disabled={
-            (currentStep === 1 && !userProfile.name) ||
-            (currentStep === 2 && userProfile.interests.length === 0) ||
-            (currentStep === 3 && userProfile.goals.length === 0) ||
-            (currentStep === 4 && !userProfile.timeCommitment) ||
-            (currentStep === 5 && userProfile.preferredLearning.length === 0)
-          }
-          className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-            (currentStep === 1 && !userProfile.name) ||
-            (currentStep === 2 && userProfile.interests.length === 0) ||
-            (currentStep === 3 && userProfile.goals.length === 0) ||
-            (currentStep === 4 && !userProfile.timeCommitment) ||
-            (currentStep === 5 && userProfile.preferredLearning.length === 0)
-              ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-              : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          {isGenerating ? (
-            <>
-              <FaSpinner className="animate-spin" />
-              Generating Roadmap...
-            </>
-          ) : currentStep === 5 ? (
-            <>
-              Generate My Roadmap
-              <FaRocket />
-            </>
-          ) : (
-            <>
-              Next
-              <FaArrowRight />
-            </>
-          )}
-        </button>
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              Step {currentStep} of 5
+            </span>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((step) => (
+                <div
+                  key={step}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    step <= currentStep ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleNext}
+            disabled={
+              (currentStep === 1 && !userProfile.name) ||
+              (currentStep === 2 && userProfile.interests.length === 0) ||
+              (currentStep === 3 && userProfile.goals.length === 0) ||
+              (currentStep === 4 && !userProfile.timeCommitment) ||
+              (currentStep === 5 && userProfile.preferredLearning.length === 0)
+            }
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl ${
+              (currentStep === 1 && !userProfile.name) ||
+              (currentStep === 2 && userProfile.interests.length === 0) ||
+              (currentStep === 3 && userProfile.goals.length === 0) ||
+              (currentStep === 4 && !userProfile.timeCommitment) ||
+              (currentStep === 5 && userProfile.preferredLearning.length === 0)
+                ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                : currentStep === 5
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600'
+                  : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600'
+            }`}
+          >
+            {isGenerating ? (
+              <>
+                <FaSpinner className="animate-spin w-4 h-4" />
+                <span>Generating Your Roadmap...</span>
+              </>
+            ) : currentStep === 5 ? (
+              <>
+                <FaRocket className="w-4 h-4" />
+                <span>Generate My Roadmap</span>
+                <span className="text-lg">🚀</span>
+              </>
+            ) : (
+              <>
+                <span>Continue</span>
+                <FaArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </motion.button>
+        </div>
+
+        {/* Helpful Tips */}
+        <div className="mt-4 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-full">
+            <span className="text-sm text-blue-700 dark:text-blue-300">
+              💡 {currentStep === 1 ? 'Tell us your name to get started' :
+                  currentStep === 2 ? 'Select 2-4 areas for the best roadmap' :
+                  currentStep === 3 ? 'Choose your learning goals' :
+                  currentStep === 4 ? 'How much time can you dedicate?' :
+                  'Almost done! Choose your learning style'}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   )

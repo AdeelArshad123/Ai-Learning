@@ -1,8 +1,19 @@
 'use client'
 
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { FiCode, FiCopy, FiPlay, FiRefreshCw, FiMessageSquare, FiBookOpen, FiZap, FiCheck, FiEdit3, FiDownload, FiSave, FiUpload } from 'react-icons/fi'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  FiCode, FiCopy, FiPlay, FiRefreshCw, FiMessageSquare, FiBookOpen, FiZap, FiCheck,
+  FiEdit3, FiDownload, FiSave, FiUpload, FiTarget, FiClock, FiShield, FiDatabase,
+  FiLayers, FiGlobe, FiCpu, FiBarChart, FiAward, FiLightbulb, FiTool, FiPackage,
+  FiGitCommit, FiMonitor, FiActivity, FiAlertCircle, FiCheckCircle, FiArrowRight,
+  FiChevronDown, FiChevronUp, FiMaximize2, FiMinimize2, FiSettings, FiTrendingUp,
+  FiUser, FiStar, FiGitBranch, FiEye, FiTrash2, FiShare2, FiHeart, FiThumbsUp
+} from 'react-icons/fi'
+import {
+  FaReact, FaNodeJs, FaPython, FaJava, FaPhp, FaRust, FaGolang, FaDocker,
+  FaAws, FaGithub, FaRobot, FaBrain, FaRocket, FaFlask, FaDatabase
+} from 'react-icons/fa'
 import { useNotifications } from './NotificationProvider'
 
 interface AICodeGeneratorProps {
@@ -10,31 +21,253 @@ interface AICodeGeneratorProps {
 }
 
 export default function AICodeGenerator({ className = '' }: AICodeGeneratorProps) {
-  const [activeTab, setActiveTab] = useState('ai')
+  // Core state
+  const [activeMode, setActiveMode] = useState<'smart' | 'template' | 'review'>('smart')
   const [language, setLanguage] = useState('JavaScript')
   const [topic, setTopic] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [generatedCode, setGeneratedCode] = useState('')
   const [explanation, setExplanation] = useState('')
+  const [isCompact, setIsCompact] = useState(true)
 
-  // Live Editor state
-  const [liveCode, setLiveCode] = useState('// Write your code here...\nconsole.log("Hello, World!");')
-  const [liveOutput, setLiveOutput] = useState('')
+  // Smart AI features
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+  const [smartSuggestions, setSmartSuggestions] = useState<string[]>([])
+  const [detectedPatterns, setDetectedPatterns] = useState<string[]>([])
+  const [complexityLevel, setComplexityLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('intermediate')
+  const [codeQuality, setCodeQuality] = useState<number>(0)
+  const [securityScore, setSecurityScore] = useState<number>(0)
+  const [performanceScore, setPerformanceScore] = useState<number>(0)
 
-  // Templates state
-  const [selectedTemplate, setSelectedTemplate] = useState('')
+  // Project context
+  const [projectType, setProjectType] = useState('')
+  const [framework, setFramework] = useState('')
+  const [includeTests, setIncludeTests] = useState(false)
+  const [includeDocs, setIncludeDocs] = useState(false)
+  const [includeComments, setIncludeComments] = useState(true)
 
-  // AI Suggestions state
-  const [userCode, setUserCode] = useState('')
-  const [suggestions, setSuggestions] = useState<string[]>([])
-
-  // Code Review state
-  const [reviewCode, setReviewCode] = useState('')
-  const [reviewResults, setReviewResults] = useState<any>(null)
+  // Generation history and analytics
+  const [generationHistory, setGenerationHistory] = useState<any[]>([])
+  const [userSkillLevel, setUserSkillLevel] = useState<number>(50)
+  const [favoriteLanguages, setFavoriteLanguages] = useState<string[]>(['JavaScript'])
 
   const { addNotification } = useNotifications()
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Code templates
+  // Smart language data with frameworks and use cases
+  const languageData = {
+    JavaScript: {
+      icon: FaReact,
+      color: 'from-yellow-400 to-orange-500',
+      frameworks: ['React', 'Vue', 'Angular', 'Node.js', 'Express'],
+      useCases: ['Web Apps', 'APIs', 'Mobile Apps', 'Desktop Apps'],
+      difficulty: 'beginner'
+    },
+    Python: {
+      icon: FaPython,
+      color: 'from-blue-400 to-green-500',
+      frameworks: ['Django', 'Flask', 'FastAPI', 'Pandas', 'TensorFlow'],
+      useCases: ['Web APIs', 'Data Science', 'AI/ML', 'Automation'],
+      difficulty: 'beginner'
+    },
+    Java: {
+      icon: FaJava,
+      color: 'from-red-500 to-orange-600',
+      frameworks: ['Spring', 'Spring Boot', 'Hibernate', 'Maven'],
+      useCases: ['Enterprise Apps', 'Android', 'Web Services'],
+      difficulty: 'intermediate'
+    },
+    TypeScript: {
+      icon: FaReact,
+      color: 'from-blue-500 to-purple-600',
+      frameworks: ['Angular', 'React', 'Vue', 'NestJS'],
+      useCases: ['Large Web Apps', 'Enterprise', 'Type Safety'],
+      difficulty: 'intermediate'
+    },
+    Go: {
+      icon: FaGolang,
+      color: 'from-cyan-400 to-blue-500',
+      frameworks: ['Gin', 'Echo', 'Fiber', 'Gorilla'],
+      useCases: ['Microservices', 'CLI Tools', 'Cloud Native'],
+      difficulty: 'intermediate'
+    },
+    Rust: {
+      icon: FaRust,
+      color: 'from-orange-600 to-red-600',
+      frameworks: ['Actix', 'Rocket', 'Warp', 'Tokio'],
+      useCases: ['System Programming', 'WebAssembly', 'Performance'],
+      difficulty: 'advanced'
+    }
+  }
+
+  // Smart pattern detection
+  const codePatterns = {
+    'api': ['REST API', 'GraphQL', 'Authentication', 'Database'],
+    'component': ['React Component', 'Vue Component', 'UI Library'],
+    'algorithm': ['Sorting', 'Searching', 'Data Structures'],
+    'database': ['CRUD Operations', 'Queries', 'Migrations'],
+    'auth': ['JWT', 'OAuth', 'Session Management'],
+    'testing': ['Unit Tests', 'Integration Tests', 'E2E Tests']
+  }
+
+  // Project templates with intelligent suggestions
+  const smartTemplates = {
+    'E-commerce API': {
+      languages: ['JavaScript', 'Python', 'Java'],
+      frameworks: ['Express', 'Django', 'Spring Boot'],
+      features: ['Authentication', 'Payment', 'Database', 'Testing'],
+      complexity: 'intermediate'
+    },
+    'React Dashboard': {
+      languages: ['JavaScript', 'TypeScript'],
+      frameworks: ['React', 'Next.js'],
+      features: ['Charts', 'Authentication', 'Responsive', 'Testing'],
+      complexity: 'intermediate'
+    },
+    'Data Processing': {
+      languages: ['Python', 'JavaScript'],
+      frameworks: ['Pandas', 'NumPy', 'Node.js'],
+      features: ['CSV Processing', 'Visualization', 'APIs'],
+      complexity: 'beginner'
+    }
+  }
+
+  // Intelligent analysis functions
+  const analyzeUserInput = useCallback((input: string) => {
+    const patterns = []
+    const suggestions = []
+    let detectedComplexity = 'beginner'
+    let suggestedFramework = ''
+
+    // Pattern detection
+    if (input.toLowerCase().includes('api') || input.toLowerCase().includes('endpoint')) {
+      patterns.push('API Development')
+      suggestions.push('Consider adding authentication and error handling')
+      suggestedFramework = language === 'JavaScript' ? 'Express' : language === 'Python' ? 'FastAPI' : 'Spring Boot'
+    }
+
+    if (input.toLowerCase().includes('component') || input.toLowerCase().includes('ui')) {
+      patterns.push('UI Component')
+      suggestions.push('Include accessibility features and responsive design')
+      suggestedFramework = 'React'
+    }
+
+    if (input.toLowerCase().includes('database') || input.toLowerCase().includes('crud')) {
+      patterns.push('Database Operations')
+      suggestions.push('Add input validation and SQL injection protection')
+      detectedComplexity = 'intermediate'
+    }
+
+    if (input.toLowerCase().includes('algorithm') || input.toLowerCase().includes('sort')) {
+      patterns.push('Algorithm Implementation')
+      suggestions.push('Consider time and space complexity optimization')
+      detectedComplexity = 'intermediate'
+    }
+
+    // Complexity detection
+    const complexWords = ['advanced', 'optimization', 'performance', 'scalable', 'enterprise']
+    if (complexWords.some(word => input.toLowerCase().includes(word))) {
+      detectedComplexity = 'advanced'
+    }
+
+    setDetectedPatterns(patterns)
+    setSmartSuggestions(suggestions)
+    setComplexityLevel(detectedComplexity as any)
+    if (suggestedFramework) setFramework(suggestedFramework)
+
+    return { patterns, suggestions, complexity: detectedComplexity, framework: suggestedFramework }
+  }, [language])
+
+  // Smart code generation with enhanced features
+  const generateSmartCode = async () => {
+    if (!topic.trim()) {
+      addNotification('Please describe what you want to build', 'error')
+      return
+    }
+
+    setIsLoading(true)
+
+    // Analyze user input
+    const analysis = analyzeUserInput(topic)
+    setAiAnalysis(analysis)
+
+    try {
+      const response = await fetch('/api/generate-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic,
+          language,
+          difficulty: complexityLevel,
+          framework,
+          includeTests,
+          includeDocs,
+          includeComments,
+          projectType,
+          patterns: detectedPatterns,
+          userSkillLevel,
+          customInstructions: `Generate production-ready code with best practices. Include error handling, security considerations, and performance optimizations.`
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setGeneratedCode(data.data.code)
+        setExplanation(data.data.explanation)
+
+        // Calculate quality scores
+        setCodeQuality(calculateCodeQuality(data.data.code))
+        setSecurityScore(calculateSecurityScore(data.data.code))
+        setPerformanceScore(calculatePerformanceScore(data.data.code))
+
+        // Update generation history
+        const newEntry = {
+          id: Date.now(),
+          topic,
+          language,
+          code: data.data.code,
+          timestamp: new Date().toISOString(),
+          quality: codeQuality
+        }
+        setGenerationHistory(prev => [newEntry, ...prev.slice(0, 9)])
+
+        addNotification('Smart code generated successfully!', 'success')
+      }
+    } catch (error) {
+      addNotification('Generation failed. Please try again.', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Quality calculation functions
+  const calculateCodeQuality = (code: string): number => {
+    let score = 50
+    if (code.includes('try') && code.includes('catch')) score += 15
+    if (code.includes('const ') || code.includes('let ')) score += 10
+    if (code.includes('//') || code.includes('/*')) score += 10
+    if (code.includes('async') || code.includes('await')) score += 10
+    if (code.length > 200) score += 5
+    return Math.min(score, 100)
+  }
+
+  const calculateSecurityScore = (code: string): number => {
+    let score = 60
+    if (code.includes('validate') || code.includes('sanitize')) score += 20
+    if (code.includes('bcrypt') || code.includes('hash')) score += 15
+    if (code.includes('jwt') || code.includes('auth')) score += 5
+    return Math.min(score, 100)
+  }
+
+  const calculatePerformanceScore = (code: string): number => {
+    let score = 70
+    if (code.includes('cache') || code.includes('memo')) score += 15
+    if (code.includes('async') || code.includes('Promise')) score += 10
+    if (code.includes('optimize') || code.includes('efficient')) score += 5
+    return Math.min(score, 100)
+  }
+
   const templates = {
     JavaScript: {
       'React Component': `import React, { useState } from 'react';

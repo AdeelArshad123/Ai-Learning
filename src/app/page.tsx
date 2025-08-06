@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import TrendingTools from '@/components/TrendingTools'
 import YouTubeChannels from '@/components/YouTubeChannelsFixed'
-import Dashboard from '@/components/Dashboard'
+
 import SearchBar from '@/components/SearchBar'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
@@ -31,13 +31,13 @@ import AILearningAssistant from '@/components/AILearningAssistant'
 import AIQuizGenerator from '@/components/AIQuizGenerator'
 import AIRoadmapGenerator from '@/components/AIRoadmapGenerator'
 import AILearningAnalytics from '@/components/AILearningAnalytics'
-import AISearchBarSimple from '@/components/AISearchBarSimple'
+import AISearchBar from '@/components/AISearchBar'
 import FloatingAIButton from '@/components/FloatingAIButton'
 import AIAPIGenerator from '@/components/AIAPIGenerator'
 const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
   loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
 })
-import { FaReact, FaGithub, FaDatabase, FaStripe, FaYoutube, FaPalette, FaBook, FaCode, FaServer, FaCloud, FaIcons, FaRegLightbulb, FaRocket, FaCogs } from 'react-icons/fa';
+import { FaReact, FaGithub, FaDatabase, FaStripe, FaYoutube, FaPalette, FaBook, FaCode, FaServer, FaCloud, FaIcons, FaRegLightbulb, FaRocket, FaCogs, FaRobot } from 'react-icons/fa';
 import { FiBookOpen, FiCheck, FiTrendingUp, FiBarChart, FiAward, FiHelpCircle } from 'react-icons/fi';
 
 import Typewriter from '../components/Typewriter';
@@ -53,12 +53,7 @@ export default function Home() {
       {/* Hero Section with Multiple Options */}
       <HeroSelector />
 
-      {/* Dashboard Section */}
-      <section id="dashboard" className="mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 mx-4">
-          <Dashboard />
-        </div>
-      </section>
+
 
       {/* AI Learning Analytics Section */}
       <section id="ai-analytics" className="container mx-auto px-4 mb-24">
@@ -80,34 +75,57 @@ export default function Home() {
         </NoSSR>
       </section>
 
-      {/* AI Search Bar Section */}
-      <section id="ai-search" className="container mx-auto px-4 mb-24">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center mb-8"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-4xl font-extrabold text-primary dark:text-white tracking-tight drop-shadow">
-                AI-Powered Search
-              </span>
-              <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">🤖 AI</span>
+      {/* AI-Powered Search Section - Full Width */}
+      <section id="ai-search" className="w-full mb-24">
+        <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 py-16 px-4">
+          <div className="container mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center mb-12"
+            >
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="p-3 bg-blue-500 rounded-2xl shadow-lg">
+                  <FaRobot className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                    AI-Powered Search
+                  </h2>
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                      <span className="text-sm font-medium text-blue-700 dark:text-blue-300">🤖 Intelligent</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                      <span className="text-sm font-medium text-purple-700 dark:text-purple-300">🎤 Voice Enabled</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <span className="text-sm font-medium text-green-700 dark:text-green-300">⚡ Real-time</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-              Ask AI anything about programming. Get intelligent suggestions, voice search, and personalized results.
-            </p>
-          </motion.div>
-          <ClientOnly fallback={
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-8 animate-pulse">
-              <div className="h-12 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
-            </div>
-          }>
-            <AISearchBarSimple />
-          </ClientOnly>
+              <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Discover the best programming resources with our AI-powered search engine. Get intelligent suggestions,
+                use voice search, and find exactly what you need to advance your coding journey.
+              </p>
+            </motion.div>
+
+            <ClientOnly fallback={
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-700 animate-pulse">
+                <div className="h-16 bg-gray-200 dark:bg-gray-600 rounded-xl mb-4"></div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="h-24 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
+                  <div className="h-24 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
+                  <div className="h-24 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
+                  <div className="h-24 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
+                </div>
+              </div>
+            }>
+              <AISearchBar />
+            </ClientOnly>
+          </div>
         </div>
       </section>
 
@@ -155,29 +173,31 @@ export default function Home() {
 
       <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
 
-      {/* Quiz Generator Section */}
+      {/* Unified Quiz Generator Section */}
       <section id="quizzes" className="container mx-auto px-4 mb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <LazyTopicQuiz language="JavaScript" topic="Async/Await" />
-          </div>
-          <div>
-            <ClientOnly fallback={
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-                <div className="animate-pulse">
-                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
-                  <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <div className="max-w-6xl mx-auto">
+          <ClientOnly fallback={
+            <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20 rounded-3xl p-8 shadow-2xl border border-purple-200 dark:border-purple-700 animate-pulse">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                <div className="space-y-2">
+                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96"></div>
                 </div>
               </div>
-            }>
-              <AIQuizGenerator
-                topic="JavaScript"
-                difficulty="intermediate"
-                questionCount={3}
-              />
-            </ClientOnly>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+                <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+                <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+              </div>
+            </div>
+          }>
+            <AIQuizGenerator
+              topic="JavaScript"
+              difficulty="intermediate"
+              questionCount={5}
+            />
+          </ClientOnly>
         </div>
       </section>
 

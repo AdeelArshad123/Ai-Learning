@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 
 interface UserProfile {
   name: string
@@ -77,6 +78,10 @@ interface LearningRoadmap {
     skills: string[]
   }[]
 }
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
 
 // AI-powered roadmap generation
 async function generatePersonalizedRoadmap(userProfile: UserProfile): Promise<LearningRoadmap> {
