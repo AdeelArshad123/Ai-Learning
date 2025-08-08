@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiCheck, FiX, FiAlertCircle, FiInfo, FiBell } from 'react-icons/fi'
 
-interface Notification {
+export type Notification = {
   id: string
   type: 'success' | 'error' | 'warning' | 'info'
   title: string
@@ -12,12 +12,18 @@ interface Notification {
   duration?: number
 }
 
-interface NotificationSystemProps {
+type Props = {
   notifications: Notification[]
   onRemove: (id: string) => void
 }
 
-export function NotificationToast({ notification, onRemove }: { notification: Notification; onRemove: (id: string) => void }) {
+const NotificationToast = ({ 
+  notification, 
+  onRemove 
+}: { 
+  notification: Notification
+  onRemove: (id: string) => void 
+}) => {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
@@ -93,18 +99,18 @@ export function NotificationToast({ notification, onRemove }: { notification: No
   )
 }
 
-export function NotificationCenter({ notifications, onRemove }: NotificationSystemProps) {
+export const NotificationCenter = ({ notifications, onRemove }: Props) => {
   return (
     <div className="fixed top-4 right-4 z-50 space-y-3">
       <AnimatePresence>
-        {notifications.map((notification) => (
-          <NotificationToast
-            key={notification.id}
-            notification={notification}
-            onRemove={onRemove}
+        {notifications.map(notification => (
+          <NotificationToast 
+            key={notification.id} 
+            notification={notification} 
+            onRemove={onRemove} 
           />
         ))}
       </AnimatePresence>
     </div>
   )
-} 
+}

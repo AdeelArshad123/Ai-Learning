@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Color variables for AuthModal */
+  --primary: #3b82f6;
+  --secondary: #8b5cf6;
+  --text: #1f2937;
+  --background: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: rgba(156, 163, 175, 0.3);
+  --transition: all 0.3s ease;
+}
+
+[data-theme="dark"] {
+  --text: #f9fafb;
+  --background: #111827;
+  --glass-bg: rgba(17, 24, 39, 0.9);
+  --glass-border: rgba(75, 85, 99, 0.3);
+  --input-bg: rgba(31, 41, 55, 0.8);
+  --input-border: rgba(75, 85, 99, 0.5);
+}
+
+#root {
+  margin: auto;
+}
+
 @layer base {
   body {
     @apply text-gray-900 dark:text-gray-100;
@@ -10,9 +41,59 @@
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors;
+    @apply px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors;
   }
   .btn-secondary {
-    @apply px-4 py-2 bg-secondary-500 text-white rounded-md hover:bg-secondary-600 transition-colors;
+    @apply px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors;
   }
-} 
+  
+  /* AI Automation Theme Components */
+  .ai-card {
+    @apply bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm;
+  }
+  
+  .ai-card-elevated {
+    @apply bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow;
+  }
+  
+  .ai-button-primary {
+    @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+  
+  .ai-badge-active {
+    @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .ai-progress-neural {
+    @apply bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300;
+  }
+}
+
+/* Custom AI animations */
+@keyframes neuralPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes brainWave {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+}
+
+@keyframes dataFlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-neural-pulse {
+  animation: neuralPulse 3s ease-in-out infinite;
+}
+
+.animate-brain-wave {
+  animation: brainWave 4s ease-in-out infinite;
+}
+
+.animate-data-flow {
+  animation: dataFlow 2s linear infinite;
+}

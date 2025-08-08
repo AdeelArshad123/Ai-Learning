@@ -259,14 +259,14 @@ export default function TopicQuiz({ language, topic }: { language: string; topic
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-            <span className="text-white text-xl">🧠</span>
+            <span className="text-white text-xl">📚</span>
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            AI Quiz Generator
+            Topic-Based Quiz Builder
           </h1>
         </div>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Challenge yourself with intelligent quizzes that adapt to your skill level
+          Create custom quizzes by selecting specific topics and difficulty levels
         </p>
       </div>
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { aiCodeReviewer } from '@/lib/ai-code-reviewer'
 
 interface CodeReviewRequest {
   code: string
@@ -244,29 +245,120 @@ async function performCodeReview(request: CodeReviewRequest): Promise<CodeReview
 
 export async function POST(request: NextRequest) {
   try {
-    const reviewRequest: CodeReviewRequest = await request.json()
+    const body = await request.json()
+    const { action, code, language, context, reviewType, userLevel, issueTypes } = body
 
-    if (!reviewRequest.code || !reviewRequest.language) {
-      return NextResponse.json(
-        { error: 'Code and language are required' },
-        { status: 400 }
-      )
+    // Handle new AI-powered actions
+    switch (action) {
+      case 'ai-review':
+        if (!code || !language) {
+          return NextResponse.json(
+            { error: 'Code and language are required' },
+            { status: 400 }
+          )
+        }
+
+        const aiReviewRequest = {
+          code,
+          language,
+          context,
+          reviewType: reviewType || 'comprehensive',
+          userLevel: userLevel || 'intermediate'
+        }
+
+        const aiReviewResult = await aiCodeReviewer.reviewCode(aiReviewRequest)
+
+        return NextResponse.json({
+          success: true,
+          data: aiReviewResult,
+          timestamp: new Date().toISOString()
+        })
+
+      case 'realtime-analysis':
+        if (!code || !language) {
+          return NextResponse.json(
+            { error: 'Code and language are required' },
+            { status: 400 }
+          )
+        }
+
+        const realtimeResult = await aiCodeReviewer.analyzeCodeRealtime(code, language)
+
+        return NextResponse.json({
+          success: true,
+          data: realtimeResult,
+          timestamp: new Date().toISOString()
+        })
+
+      case 'auto-fix':
+        if (!code || !language) {
+          return NextResponse.json(
+            { error: 'Code and language are required' },
+            { status: 400 }
+          )
+        }
+
+        const fixResult = await aiCodeReviewer.autoFixCode(
+          code,
+          language,
+          issueTypes || []
+        )
+
+        return NextResponse.json({
+          success: true,
+          data: fixResult,
+          timestamp: new Date().toISOString()
+        })
+
+      case 'generate-learning':
+        if (!body.issues || !Array.isArray(body.issues)) {
+          return NextResponse.json(
+            { error: 'Issues array is required' },
+            { status: 400 }
+          )
+        }
+
+        const learningResources = await aiCodeReviewer.generateLearningResources(body.issues)
+
+        return NextResponse.json({
+          success: true,
+          data: learningResources,
+          count: learningResources.length,
+          timestamp: new Date().toISOString()
+        })
+
+      default:
+        // Fallback to existing rule-based review for backward compatibility
+        const reviewRequest: CodeReviewRequest = {
+          code: code || body.code,
+          language: language || body.language,
+          context: context || body.context,
+          reviewType: reviewType || body.reviewType || 'comprehensive'
+        }
+
+        if (!reviewRequest.code || !reviewRequest.language) {
+          return NextResponse.json(
+            { error: 'Code and language are required' },
+            { status: 400 }
+          )
+        }
+
+        console.log('Performing rule-based code review for:', reviewRequest.language, reviewRequest.reviewType)
+
+        const reviewResult = await performCodeReview(reviewRequest)
+
+        return NextResponse.json({
+          ...reviewResult,
+          generated_at: new Date().toISOString(),
+          review_type: reviewRequest.reviewType,
+          language: reviewRequest.language,
+          method: 'rule-based'
+        })
     }
-
-    console.log('Performing code review for:', reviewRequest.language, reviewRequest.reviewType)
-
-    const reviewResult = await performCodeReview(reviewRequest)
-
-    return NextResponse.json({
-      ...reviewResult,
-      generated_at: new Date().toISOString(),
-      review_type: reviewRequest.reviewType,
-      language: reviewRequest.language
-    })
 
   } catch (error: any) {
     console.error('Error performing code review:', error)
-    
+
     return NextResponse.json({
       overallScore: 50,
       issues: [],
@@ -279,34 +371,118 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
-  // Return sample review for testing
-  const sampleReview: CodeReviewResult = {
-    overallScore: 85,
-    issues: [
-      {
-        id: 'sample-issue',
-        severity: 'medium',
-        category: 'performance',
-        title: 'Consider using const for immutable values',
-        description: 'Variables that are not reassigned should use const',
-        suggestion: 'Replace let with const where appropriate',
-        example: 'const API_URL = "https://api.example.com";'
-      }
-    ],
-    strengths: ['Good error handling', 'Clear variable names', 'Proper async/await usage'],
-    recommendations: ['Address performance issues', 'Add more comments'],
-    metrics: {
-      complexity: 80,
-      maintainability: 85,
-      security: 90,
-      performance: 75
-    }
-  }
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const info = searchParams.get('info')
 
-  return NextResponse.json({
-    ...sampleReview,
-    sample: true,
-    generated_at: new Date().toISOString()
-  })
+    if (info === 'capabilities') {
+      return NextResponse.json({
+        success: true,
+        capabilities: {
+          aiReview: {
+            description: 'AI-powered comprehensive code analysis',
+            features: ['Advanced pattern recognition', 'Context-aware suggestions', 'Learning-based improvements'],
+            supportedLanguages: ['JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'Go', 'Rust', 'PHP', 'Ruby'],
+            reviewTypes: ['basic', 'comprehensive', 'security', 'performance', 'style'],
+            userLevels: ['beginner', 'intermediate', 'advanced']
+          },
+          ruleBasedReview: {
+            description: 'Fast rule-based code analysis',
+            features: ['Security vulnerability detection', 'Performance issue identification', 'Style consistency checks'],
+            categories: ['security', 'performance', 'style', 'maintainability'],
+            responseTime: '< 1 second'
+          },
+          realtimeAnalysis: {
+            description: 'Live code analysis for immediate feedback',
+            features: ['Instant issue detection', 'Quick suggestions', 'Real-time scoring'],
+            updateFrequency: 'On keystroke'
+          },
+          autoFix: {
+            description: 'Automatic code correction',
+            capabilities: ['Syntax fixes', 'Style improvements', 'Common pattern corrections'],
+            limitations: ['Cannot fix complex logic errors', 'Requires human review']
+          },
+          learningGeneration: {
+            description: 'Educational content from code issues',
+            features: ['Concept explanations', 'Practice exercises', 'Resource recommendations']
+          }
+        },
+        availableActions: [
+          'ai-review',
+          'realtime-analysis',
+          'auto-fix',
+          'generate-learning',
+          'default (rule-based)'
+        ],
+        examples: {
+          aiReview: {
+            action: 'ai-review',
+            code: 'function add(a, b) { return a + b; }',
+            language: 'javascript',
+            reviewType: 'comprehensive',
+            userLevel: 'intermediate'
+          },
+          realtimeAnalysis: {
+            action: 'realtime-analysis',
+            code: 'var x = 1; if (x == 1) console.log("hello");',
+            language: 'javascript'
+          },
+          autoFix: {
+            action: 'auto-fix',
+            code: 'var x = 1; if (x == 1) console.log("hello");',
+            language: 'javascript',
+            issueTypes: ['var-usage', 'strict-equality']
+          },
+          ruleBasedReview: {
+            code: 'function test() { return "SELECT * FROM users WHERE id = " + userId; }',
+            language: 'javascript',
+            reviewType: 'security'
+          }
+        }
+      })
+    }
+
+    // Default: Return sample review for testing
+    const sampleReview: CodeReviewResult = {
+      overallScore: 85,
+      issues: [
+        {
+          id: 'sample-issue',
+          severity: 'medium',
+          category: 'performance',
+          title: 'Consider using const for immutable values',
+          description: 'Variables that are not reassigned should use const',
+          suggestion: 'Replace let with const where appropriate',
+          example: 'const API_URL = "https://api.example.com";'
+        }
+      ],
+      strengths: ['Good error handling', 'Clear variable names', 'Proper async/await usage'],
+      recommendations: ['Address performance issues', 'Add more comments'],
+      metrics: {
+        complexity: 80,
+        maintainability: 85,
+        security: 90,
+        performance: 75
+      }
+    }
+
+    return NextResponse.json({
+      ...sampleReview,
+      sample: true,
+      generated_at: new Date().toISOString(),
+      message: 'Enhanced AI Code Review API - Use ?info=capabilities for detailed information'
+    })
+
+  } catch (error: any) {
+    console.error('Error in code review GET:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to get code review info',
+        message: error.message
+      },
+      { status: 500 }
+    )
+  }
 }

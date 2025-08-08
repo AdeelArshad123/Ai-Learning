@@ -1,275 +1,225 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import TrendingTools from '@/components/TrendingTools'
-import YouTubeChannels from '@/components/YouTubeChannelsFixed'
-import Dashboard from '@/components/Dashboard'
-import SearchBar from '@/components/SearchBar'
-import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
-import {
-  LazyAICodeGenerator,
-  LazyTopicQuiz,
-  LazyAITutor
-} from '@/components/LazyComponents'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  FaBrain, 
+  FaRobot, 
+  FaChartLine, 
+  FaCode, 
+  FaLightbulb,
+  FaCog,
+  FaGraduationCap,
+  FaRocket,
+  FaShieldAlt
+} from 'react-icons/fa'
 
-// Lazy load heavy components
-const TopicQuiz = dynamic(() => import('@/components/TopicQuiz'), {
-  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
-})
+// Import AI automation components
+import SmartCodeReviewer from '../components/ai-automation/SmartCodeReviewer'
+import AdaptiveLearningEngine from '../components/ai-automation/AdaptiveLearningEngine'
+import PredictiveAnalyticsDashboard from '../components/ai-automation/PredictiveAnalyticsDashboard'
+import IntelligentContentGenerator from '../components/ai-automation/IntelligentContentGenerator'
+import AdvancedAutomationHub from '../components/ai-automation/AdvancedAutomationHub'
 
-const RecommendedResources = dynamic(() => import('@/components/RecommendedResources'), {
-  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
-})
+// Import existing components
+import Dashboard from '../components/Dashboard'
+import AIQuizGenerator from '../components/AIQuizGenerator'
 
-const TrendingLanguages = dynamic(() => import('@/components/TrendingLanguages'), {
-  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-xl"></div>
-})
+export default function HomePage() {
+  const [activeFeature, setActiveFeature] = useState('overview')
 
-// AI Components - Regular imports with ClientOnly wrapper
-import AILearningAssistant from '@/components/AILearningAssistant'
-import AIQuizGenerator from '@/components/AIQuizGenerator'
-import AIRoadmapGenerator from '@/components/AIRoadmapGenerator'
-import AILearningAnalytics from '@/components/AILearningAnalytics'
-import AISearchBar from '@/components/AISearchBar'
-import FloatingAIButton from '@/components/FloatingAIButton'
-const QuizAnalytics = dynamic(() => import('@/components/QuizAnalytics'), {
-  loading: () => <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl"></div>
-})
-import { FaReact, FaGithub, FaDatabase, FaStripe, FaYoutube, FaPalette, FaBook, FaCode, FaServer, FaCloud, FaIcons, FaRegLightbulb, FaRocket, FaCogs } from 'react-icons/fa';
-import { FiBookOpen, FiCheck, FiTrendingUp, FiBarChart, FiAward, FiHelpCircle } from 'react-icons/fi';
+  const aiFeatures = [
+    {
+      id: 'overview',
+      name: 'Overview',
+      icon: FaChartLine,
+      color: 'from-blue-500 to-cyan-500',
+      description: 'System overview and dashboard'
+    },
+    {
+      id: 'code-reviewer',
+      name: 'Smart Code Reviewer',
+      icon: FaCode,
+      color: 'from-blue-500 to-purple-600',
+      description: 'Real-time AI code analysis with performance optimization'
+    },
+    {
+      id: 'adaptive-learning',
+      name: 'Adaptive Learning Engine',
+      icon: FaBrain,
+      color: 'from-purple-500 to-pink-600',
+      description: 'Personalized learning paths with skill gap analysis'
+    },
+    {
+      id: 'predictive-analytics',
+      name: 'Predictive Analytics',
+      icon: FaChartLine,
+      color: 'from-green-500 to-teal-600',
+      description: 'AI-driven performance prediction and insights'
+    },
+    {
+      id: 'content-generator',
+      name: 'Content Generator',
+      icon: FaLightbulb,
+      color: 'from-yellow-500 to-orange-600',
+      description: 'Auto-generate coding exercises and projects'
+    },
+    {
+      id: 'smart-assessment',
+      name: 'Smart Assessment',
+      icon: FaGraduationCap,
+      color: 'from-indigo-500 to-purple-600',
+      description: 'Adaptive questioning with real-time difficulty adjustment'
+    },
+    {
+      id: 'automation-hub',
+      name: 'Automation Hub',
+      icon: FaCog,
+      color: 'from-indigo-500 to-purple-600',
+      description: 'Central control panel for AI automation features'
+    }
+  ]
 
-import Typewriter from '../components/Typewriter';
-import HeroSelector from '../components/HeroSections/HeroSelector';
-import ClientOnly from '../components/ClientOnly';
-import NoSSR from '../components/NoSSR';
-
-export default function Home() {
-  const [isTutorOpen, setIsTutorOpen] = useState(false)
+  const renderFeatureContent = () => {
+    switch (activeFeature) {
+      case 'overview':
+        return <Dashboard />
+      case 'code-reviewer':
+        return <SmartCodeReviewer />
+      case 'adaptive-learning':
+        return <AdaptiveLearningEngine />
+      case 'predictive-analytics':
+        return <PredictiveAnalyticsDashboard />
+      case 'content-generator':
+        return <IntelligentContentGenerator />
+      case 'smart-assessment':
+        return <AIQuizGenerator topic="JavaScript" difficulty="intermediate" questionCount={5} />
+      case 'automation-hub':
+        return <AdvancedAutomationHub />
+      default:
+        return <Dashboard />
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Hero Section with Multiple Options */}
-      <HeroSelector />
-
-      {/* Dashboard Section */}
-      <section id="dashboard" className="mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 mx-4">
-          <Dashboard />
-        </div>
-      </section>
-
-      {/* AI Learning Analytics Section */}
-      <section id="ai-analytics" className="container mx-auto px-4 mb-24">
-        <NoSSR fallback={
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-8"></div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-              </div>
-            </div>
-          </div>
-        }>
-          <AILearningAnalytics />
-        </NoSSR>
-      </section>
-
-      {/* AI Search Bar Section */}
-      <section id="ai-search" className="container mx-auto px-4 mb-24">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center mb-8"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-4xl font-extrabold text-primary dark:text-white tracking-tight drop-shadow">
-                AI-Powered Search
-              </span>
-              <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">🤖 AI</span>
-              </div>
-            </div>
-            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-              Ask AI anything about programming. Get intelligent suggestions, voice search, and personalized results.
-            </p>
-          </motion.div>
-          <ClientOnly fallback={
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl p-8 animate-pulse">
-              <div className="h-12 bg-gray-200 dark:bg-gray-600 rounded-xl"></div>
-            </div>
-          }>
-            <AISearchBar />
-          </ClientOnly>
-        </div>
-      </section>
-
-      {/* Single Recommended Resources Section - Full Width */}
-      <div className="w-full mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 py-16 px-4">
-          <RecommendedResources />
-        </div>
-      </div>
-
-      {/* AI Learning Roadmap Generator Section */}
-      <section id="ai-recommendations" className="container mx-auto px-4 mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl font-extrabold mb-4 text-primary dark:text-white tracking-tight drop-shadow">
-              AI Learning Roadmap Generator
-            </h2>
-            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-              Get a personalized learning roadmap tailored specifically for beginners and freshers. Our AI analyzes your goals, experience, and schedule to create the perfect learning path.
-            </p>
-          </motion.div>
-
-          <AIRoadmapGenerator />
-
-
-
-
-
-
-
-        </div>
-      </section>
-
-      <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
-
-      {/* Quiz Generator Section */}
-      <section id="quizzes" className="container mx-auto px-4 mb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <LazyTopicQuiz language="JavaScript" topic="Async/Await" />
-          </div>
-          <div>
-            <ClientOnly fallback={
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-                <div className="animate-pulse">
-                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
-                  <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center mb-6"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-2xl opacity-30 animate-pulse" />
+                <div className="relative w-20 h-20 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl">
+                  <FaRobot className="w-10 h-10 text-white" />
                 </div>
               </div>
-            }>
-              <AIQuizGenerator
-                topic="JavaScript"
-                difficulty="intermediate"
-                questionCount={3}
-              />
-            </ClientOnly>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4"
+            >
+              AI Automation System
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8"
+            >
+              Comprehensive AI-powered learning platform with advanced automation features
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center justify-center gap-4 flex-wrap"
+            >
+              <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                <FaBrain className="text-blue-600 w-4 h-4" />
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">AI-Powered</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full">
+                <FaRocket className="text-green-600 w-4 h-4" />
+                <span className="text-sm font-medium text-green-700 dark:text-green-300">Intelligent</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                <FaShieldAlt className="text-purple-600 w-4 h-4" />
+                <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Adaptive</span>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </section>
-
-      <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
-
-      {/* YouTube Channels Section (moved up) */}
-      <section id="youtube" className="container mx-auto px-4 mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <YouTubeChannels />
-        </div>
-      </section>
-
-      <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
-
-      {/* Trending Section */}
-      <section id="trending" className="container mx-auto px-4 mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl font-extrabold mb-4 text-primary dark:text-white tracking-tight drop-shadow">
-              Trending GitHub Repositories
-            </h2>
-            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-              Discover the most popular and trending programming tools, frameworks, and libraries from the developer community.
-            </p>
-          </motion.div>
-          <TrendingTools />
-        </div>
-      </section>
-
-      <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
-
-      {/* AI Code Generator Section */}
-      <section id="ai-code" className="container mx-auto px-4 mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl font-extrabold mb-4 text-primary dark:text-white tracking-tight drop-shadow">
-              AI Code Generator
-            </h2>
-            <p className="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-              Generate AI-powered code examples with explanations, key learning points, and multiple programming languages.
-            </p>
-          </motion.div>
-          <LazyAICodeGenerator />
-        </div>
-      </section>
-
-      <div className="w-full h-0.5 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 my-12 rounded-full" />
-
-      {/* Trending Languages Section */}
-      <section id="languages" className="container mx-auto px-4 mb-24">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-          <TrendingLanguages />
-        </div>
-      </section>
-
-      {/* AI Learning Assistant - Testing */}
-      <ClientOnly>
-        <AILearningAssistant
-          currentTopic="JavaScript"
-          currentSection="dashboard"
-        />
-      </ClientOnly>
-
-      {/* Enhanced Floating AI Assistant */}
-      <FloatingAIButton />
-
-      {/* AI Tutor Chat (Legacy - keeping for compatibility) */}
-      <LazyAITutor
-        isOpen={isTutorOpen}
-        onToggle={() => setIsTutorOpen(!isTutorOpen)}
-      />
-    </div>
-  )
-}
-
-function ResourceCard({ name, url, description }: { name: string; url: string; description: string }) {
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-md flex flex-col h-full justify-between hover:shadow-xl transition-shadow">
-      <div>
-        <h3 className="text-xl font-bold text-primary mb-2">{name}</h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
       </div>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block mt-auto bg-primary text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-primary/90 transition-colors"
-      >
-        Visit
-      </a>
+
+      {/* Navigation */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center gap-2 py-4 overflow-x-auto">
+            {aiFeatures.map((feature, index) => {
+              const IconComponent = feature.icon
+              return (
+                <motion.button
+                  key={feature.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => setActiveFeature(feature.id)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
+                    activeFeature === feature.id
+                      ? `bg-gradient-to-r ${feature.color} text-white shadow-lg scale-105`
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-102'
+                  }`}
+                >
+                  <IconComponent className="w-5 h-5" />
+                  <span className="hidden sm:inline">{feature.name}</span>
+                </motion.button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Feature Content */}
+      <div className="container mx-auto px-6 py-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeFeature}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderFeatureContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
+        <div className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              AI CodeLearner - Advanced Automation System
+            </p>
+            <div className="flex items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-500">
+              <span>🤖 AI Features</span>
+              <span>⚡ Real-time Analysis</span>
+              <span>🎯 Personalized Learning</span>
+              <span>📊 Predictive Analytics</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

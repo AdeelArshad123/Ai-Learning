@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 
-// Mock data for search
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
+
 const searchData = {
   topics: [
     { id: 'javascript-basics', title: 'JavaScript Fundamentals', type: 'topic', difficulty: 'Beginner' },
@@ -37,94 +41,68 @@ const searchData = {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const query = searchParams.get('q') || ''
+    const query = searchParams.get('q')
     const type = searchParams.get('type') || 'all'
     const category = searchParams.get('category') || 'all'
     const difficulty = searchParams.get('difficulty') || 'all'
+
+    if (!query) {
+      return NextResponse.json({ results: [], total: 0 })
+    }
 
     if (!query.trim()) {
       return NextResponse.json({ results: [], total: 0 })
     }
 
-    let results = []
+    // Use OpenAI to enhance search
+    const prompt = `
+      You are a search assistant. Given the query: "${query}", rank and filter the following items by relevance. Return a JSON array of item ids in order of relevance.
+      Items:
+      ${JSON.stringify(searchData)}
+    `
 
-    // Search in topics
-    if (type === 'all' || type === 'topics') {
-      const topicResults = searchData.topics.filter(item =>
-        item.title.toLowerCase().includes(query.toLowerCase()) &&
-        (difficulty === 'all' || item.difficulty === difficulty)
-      )
-      results.push(...topicResults)
-    }
-
-    // Search in tools
-    if (type === 'all' || type === 'tools') {
-      const toolResults = searchData.tools.filter(item =>
-        item.title.toLowerCase().includes(query.toLowerCase()) &&
-        (category === 'all' || item.category === category)
-      )
-      results.push(...toolResults)
-    }
-
-    // Search in channels
-    if (type === 'all' || type === 'channels') {
-      const channelResults = searchData.channels.filter(item =>
-        item.title.toLowerCase().includes(query.toLowerCase()) &&
-        (category === 'all' || item.category === category)
-      )
-      results.push(...channelResults)
-    }
-
-    // Search in articles
-    if (type === 'all' || type === 'articles') {
-      const articleResults = searchData.articles.filter(item =>
-        item.title.toLowerCase().includes(query.toLowerCase()) &&
-        (category === 'all' || item.category === category)
-      )
-      results.push(...articleResults)
-    }
-
-    // Sort results by relevance (exact matches first)
-    results.sort((a, b) => {
-      const aExact = a.title.toLowerCase() === query.toLowerCase()
-      const bExact = b.title.toLowerCase() === query.toLowerCase()
-      
-      if (aExact && !bExact) return -1
-      if (!aExact && bExact) return 1
-      
-      return a.title.toLowerCase().indexOf(query.toLowerCase()) - b.title.toLowerCase().indexOf(query.toLowerCase())
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: 500
     })
 
-    // Add search suggestions
-    const suggestions = generateSuggestions(query, searchData)
+    const rankedIds = JSON.parse(completion.choices[0].message.content)
+
+    // Flatten all items for lookup
+    const allItems = [
+      ...searchData.topics,
+      ...searchData.tools,
+      ...searchData.channels,
+      ...searchData.articles
+    ]
+
+    // Filter and order results by rankedIds
+    let results = rankedIds
+      .map((id: string) => allItems.find((item: any) => item.id === id))
+      .filter(Boolean)
+
+    // Apply type, category, difficulty filters
+    results = results.filter((item: any) => {
+      if (!item) return false
+      if (type !== 'all' && item.type !== type) return false
+      if (category !== 'all' && item.category !== category) return false
+      if (difficulty !== 'all' && item.difficulty !== difficulty) return false
+      return true
+    })
+
+    // Generate AI-based suggestions (simple example)
+    const suggestions = results.slice(0, 5).map((item: any) => item.title)
 
     return NextResponse.json({
-      results: results.slice(0, 20), // Limit to 20 results
+      results: results.slice(0, 20),
       total: results.length,
       suggestions,
       query
     })
   } catch (error) {
-    console.error('Error performing search:', error)
+    console.error('Error performing AI-powered search:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
-
-function generateSuggestions(query: string, data: any) {
-  const allItems = [
-    ...data.topics.map((item: any) => ({ ...item, suggestion: item.title })),
-    ...data.tools.map((item: any) => ({ ...item, suggestion: item.title })),
-    ...data.channels.map((item: any) => ({ ...item, suggestion: item.title })),
-    ...data.articles.map((item: any) => ({ ...item, suggestion: item.title }))
-  ]
-
-  const suggestions = allItems
-    .filter((item: any) => 
-      item.title.toLowerCase().includes(query.toLowerCase()) &&
-      item.title.toLowerCase() !== query.toLowerCase()
-    )
-    .slice(0, 5)
-    .map((item: any) => item.suggestion)
-
-  return suggestions
-} 
