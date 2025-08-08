@@ -11,7 +11,7 @@ import {
   FiUser, FiStar, FiGitBranch, FiEye, FiTrash2, FiShare2, FiHeart, FiThumbsUp
 } from 'react-icons/fi'
 import {
-  FaReact, FaNodeJs, FaPython, FaJava, FaPhp, FaRust, FaGolang, FaDocker,
+  FaReact, FaNodeJs, FaPython, FaJava, FaPhp, FaRust, FaDocker,
   FaAws, FaGithub, FaRobot, FaBrain, FaRocket, FaFlask, FaDatabase
 } from 'react-icons/fa'
 import { useNotifications } from './NotificationProvider'
@@ -22,6 +22,7 @@ interface AICodeGeneratorProps {
 
 export default function AICodeGenerator({ className = '' }: AICodeGeneratorProps) {
   // Core state
+  const [activeTab, setActiveTab] = useState<'ai' | 'live' | 'templates' | 'suggestions' | 'review'>('ai')
   const [activeMode, setActiveMode] = useState<'smart' | 'template' | 'review'>('smart')
   const [language, setLanguage] = useState('JavaScript')
   const [topic, setTopic] = useState('')
@@ -29,6 +30,17 @@ export default function AICodeGenerator({ className = '' }: AICodeGeneratorProps
   const [generatedCode, setGeneratedCode] = useState('')
   const [explanation, setExplanation] = useState('')
   const [isCompact, setIsCompact] = useState(true)
+
+  // Missing state declarations added below
+  const [liveCode, setLiveCode] = useState('')
+  const [liveOutput, setLiveOutput] = useState('')
+  const [selectedTemplate, setSelectedTemplate] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [reviewCode, setReviewCode] = useState('')
+  const [reviewResults, setReviewResults] = useState<any>(null)
+  const [userCode, setUserCode] = useState('')
+
+
 
   // Smart AI features
   const [aiAnalysis, setAiAnalysis] = useState<any>(null)
@@ -85,7 +97,7 @@ export default function AICodeGenerator({ className = '' }: AICodeGeneratorProps
       difficulty: 'intermediate'
     },
     Go: {
-      icon: FaGolang,
+      icon: FiCpu,
       color: 'from-cyan-400 to-blue-500',
       frameworks: ['Gin', 'Echo', 'Fiber', 'Gorilla'],
       useCases: ['Microservices', 'CLI Tools', 'Cloud Native'],

@@ -1,3 +1,9 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
@@ -78,14 +84,15 @@ const nextConfig = {
   webpack: (config, { dev, isServer, webpack }) => {
     // Bundle analyzer (only in development)
     if (process.env.ANALYZE === 'true') {
-      const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          openAnalyzer: false,
-          reportFilename: isServer ? '../analyze/server.html' : './analyze/client.html'
-        })
-      )
+      import('webpack-bundle-analyzer').then(({ BundleAnalyzerPlugin }) => {
+        config.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            openAnalyzer: false,
+            reportFilename: isServer ? '../analyze/server.html' : './analyze/client.html'
+          })
+        );
+      });
     }
 
     // 🎯 Advanced bundle splitting for optimal loading
@@ -160,7 +167,7 @@ const nextConfig = {
     // 📦 Module resolution optimizations
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': require('path').resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, 'src'),
     }
 
     // 🚀 Performance optimizations
@@ -184,4 +191,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+export default nextConfig;

@@ -9,6 +9,7 @@ import {
   FaCode, 
   FaLightbulb,
   FaCog,
+  FaUsers,
   FaGraduationCap,
   FaRocket,
   FaShieldAlt
@@ -23,9 +24,10 @@ import AdvancedAutomationHub from '../components/ai-automation/AdvancedAutomatio
 
 // Import existing components
 import Dashboard from '../components/Dashboard'
+import AICodeGenerator from '../components/AICodeGenerator'
 import AIQuizGenerator from '../components/AIQuizGenerator'
 
-export default function HomePage() {
+export default function AIAutomationPreview() {
   const [activeFeature, setActiveFeature] = useState('overview')
 
   const aiFeatures = [
@@ -135,7 +137,7 @@ export default function HomePage() {
               transition={{ delay: 0.2 }}
               className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8"
             >
-              Comprehensive AI-powered learning platform with advanced automation features
+              Comprehensive AI-powered learning platform with 10 advanced automation features
             </motion.p>
 
             <motion.div
@@ -212,7 +214,7 @@ export default function HomePage() {
               AI CodeLearner - Advanced Automation System
             </p>
             <div className="flex items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-500">
-              <span>🤖 AI Features</span>
+              <span>🤖 10 AI Features</span>
               <span>⚡ Real-time Analysis</span>
               <span>🎯 Personalized Learning</span>
               <span>📊 Predictive Analytics</span>

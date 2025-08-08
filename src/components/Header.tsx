@@ -6,8 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FiMenu, FiX, FiUser, FiLogIn, FiLogOut, FiBookOpen, FiTrendingUp, FiYoutube, FiCode, FiHelpCircle, FiStar, FiZap, FiChevronRight } from 'react-icons/fi'
 import { FaRocket, FaBrain, FaGraduationCap } from 'react-icons/fa'
 import ThemeToggle from './ThemeToggle'
-import { useSession, signIn, signOut } from 'next-auth/react'
 import AuthModal from './AuthModal'
+
+// Mock session hook for development
+const useSession = () => ({ data: null, status: 'unauthenticated' })
+const signIn = () => console.log('Sign in clicked')
+const signOut = () => console.log('Sign out clicked')
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

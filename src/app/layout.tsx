@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import FooterWithStyleSelector from '@/components/FooterWithStyleSelector'
 import Providers from '@/components/Providers'
 import ErrorBoundary from '@/components/ErrorBoundary'
 
@@ -35,7 +35,7 @@ export default function RootLayout({
             <main className="flex-1 pt-20">
               {children}
             </main>
-            <Footer />
+            <FooterWithStyleSelector />
           </Providers>
         </ErrorBoundary>
       </body>

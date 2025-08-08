@@ -9,6 +9,7 @@ import {
   FaCode, 
   FaLightbulb,
   FaCog,
+  FaUsers,
   FaGraduationCap,
   FaRocket,
   FaShieldAlt
@@ -25,7 +26,7 @@ import AdvancedAutomationHub from '../components/ai-automation/AdvancedAutomatio
 import Dashboard from '../components/Dashboard'
 import AIQuizGenerator from '../components/AIQuizGenerator'
 
-export default function HomePage() {
+export default function PreviewPage() {
   const [activeFeature, setActiveFeature] = useState('overview')
 
   const aiFeatures = [
